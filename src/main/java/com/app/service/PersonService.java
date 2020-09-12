@@ -37,8 +37,6 @@ public class PersonService extends BaseService {
 	@Value("${path.photo}")
     private String path;
 
-	private Person person;
-
 	@Value("${photo.not.found}")
 	private String photoNotFound;
 

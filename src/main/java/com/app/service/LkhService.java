@@ -55,6 +55,13 @@ public class LkhService extends BaseService  {
 		return pojoLkh;
 	}
 	
+	public PojoPagination getListLkhBySearch(String inquiry,int page,int limit) throws Exception{
+		PojoPagination pojoLkh = new PojoPagination();
+		pojoLkh.setData(lkhDao.getLkhByService(SessionHelper.getPerson().getId(),inquiry,page,limit));
+		pojoLkh.setCount(lkhDao.getCountLkhByService(SessionHelper.getPerson().getId(),inquiry));
+		return pojoLkh;
+	}
+	
 	public void edit(MultipartFile file,String lkhs) throws Exception{
 		Lkh lkh = new Lkh();
 		lkh = super.readValue(lkhs, Lkh.class);

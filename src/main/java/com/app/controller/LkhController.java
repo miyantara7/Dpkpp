@@ -43,6 +43,15 @@ public class LkhController {
 		}
 	}
 	
+	@GetMapping(value = "/get-list/search", params = {"page","limit"})
+	public ResponseEntity<?> getListLkhBySearch(String inquiry,int page,int limit) throws Exception {
+		try {			
+			return new ResponseEntity<>(lkhService.getListLkhBySearch(inquiry,page,limit), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	@PutMapping("/edit")
 	@Transactional
 	public ResponseEntity<?> editPerson(MultipartFile file,String lkh) throws Exception {

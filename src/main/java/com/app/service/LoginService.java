@@ -21,7 +21,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.app.config.JwtTokenUtil;
-import com.app.dao.LoginDao;
 import com.app.dao.UserDao;
 import com.app.dao.UserDaoHibernate;
 import com.app.helper.Constants;
@@ -47,12 +46,6 @@ public class LoginService extends BaseService implements UserDetailsService {
 	
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private LoginDao loginDao;
-
-	@Autowired
-	private PersonService personService;
 	
 	@Value("${path.photo}")
     private String path;
