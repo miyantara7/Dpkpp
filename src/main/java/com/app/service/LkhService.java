@@ -72,8 +72,7 @@ public class LkhService extends BaseService  {
 		return pojoLkh;
 	}
 	
-	public PojoLkh getLkhById(String id) throws Exception{
-		
+	public PojoLkh getLkhById(String id) throws Exception{	
 		PojoLkh pojoLkh = lkhDao.getLkhById(id);
 		String filePath = pojoLkh.getId()+ "_"+pojoLkh.getFileName();
 		File file = new File(path + filePath);
