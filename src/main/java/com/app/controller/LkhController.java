@@ -54,6 +54,15 @@ public class LkhController {
 		}
 	}
 	
+	@GetMapping(value = "/get-list-mobile")
+	public ResponseEntity<?> getListLkhMobile() throws Exception {
+		try {			
+			return new ResponseEntity<>(lkhService.getListLkhMobile(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 	@PutMapping("/edit")
 	@Transactional
 	public ResponseEntity<?> editPerson(MultipartFile file,String lkh) throws Exception {

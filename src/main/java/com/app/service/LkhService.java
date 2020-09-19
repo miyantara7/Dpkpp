@@ -65,6 +65,12 @@ public class LkhService extends BaseService  {
 		pojoLkh.setCount(lkhDao.getCountLkhByService(SessionHelper.getPerson().getId(),inquiry));
 		return pojoLkh;
 	}
+	public PojoPagination getListLkhMobile() throws Exception{
+		PojoPagination pojoLkh = new PojoPagination();
+		pojoLkh.setData(lkhDao.getLkhByServiceMobile(SessionHelper.getPerson().getId(),null));
+		pojoLkh.setCount(lkhDao.getCountLkhByService(SessionHelper.getPerson().getId(),null));
+		return pojoLkh;
+	}
 	
 	public PojoLkh getLkhById(String id) throws Exception{
 		

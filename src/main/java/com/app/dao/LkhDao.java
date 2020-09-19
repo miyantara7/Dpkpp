@@ -107,6 +107,16 @@ public class LkhDao extends BaseDao implements BaseMasterDao {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<PojoLkh> getLkhByServiceMobile(String personId,String inquiry) throws Exception{
+		String sql = bBuilder("SELECT l.id,l.description,l.nip,l.name,l.units,l.positions,l.status FROM ( ");
+		List<Object[]> results = em.createNativeQuery(sql + getQueryListLkh(inquiry))
+				.setParameter("personId", personId)
+				.getResultList();
+		
+		return bMapperList(results,PojoLkh.class, "id","desc","nip","name","unit","position","status");
+	}
+	
+	@SuppressWarnings("unchecked")
 	public Lkh getById(String id) {
 		List<Lkh> list = em.createQuery("From Lkh where id = :id")
 				.setParameter("id", id)
@@ -125,4 +135,5 @@ public class LkhDao extends BaseDao implements BaseMasterDao {
 		
 		return bMapperList(results,PojoLkh.class, "id","endDate","valDate","fileName","typeFile","hasil","laporan").get(0);
 	}
+	
 }
