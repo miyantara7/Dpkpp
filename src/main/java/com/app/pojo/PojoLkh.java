@@ -2,46 +2,53 @@ package com.app.pojo;
 
 public class PojoLkh extends BasePojo {
 
-	private String nip;
-	private String name;
-	private String unit;
-	private String position;
-	private String desc;
-	private boolean status;
-	public String getNip() {
-		return nip;
+	private String endDate;
+	private String valDate;
+	private String typeFile;
+	private String fileName;
+	private String file;
+	private String hasil;
+	private String lapooran;
+	public String getEndDate() {
+		return endDate;
 	}
-	public void setNip(String nip) {
-		this.nip = nip;
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
-	public String getName() {
-		return name;
+	public String getValDate() {
+		return valDate;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setValDate(String valDate) {
+		this.valDate = valDate;
 	}
-	public String getUnit() {
-		return unit;
+	public String getTypeFile() {
+		return typeFile;
 	}
-	public void setUnit(String unit) {
-		this.unit = unit;
+	public void setTypeFile(String typeFile) {
+		this.typeFile = typeFile;
 	}
-	public String getPosition() {
-		return position;
+	public String getFileName() {
+		return fileName;
 	}
-	public void setPosition(String position) {
-		this.position = position;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
-	public String getDesc() {
-		return desc;
+	public String getFile() {
+		return file;
 	}
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setFile(String file) {
+		this.file = file;
 	}
-	public boolean isStatus() {
-		return status;
+	public String getHasil() {
+		return hasil;
 	}
-	public void setStatus(boolean status) {
-		this.status = status;
+	public void setHasil(String hasil) {
+		this.hasil = hasil;
+	}
+	public String getLapooran() {
+		return lapooran;
+	}
+	public void setLapooran(String lapooran) {
+		this.lapooran = lapooran;
 	}
 }

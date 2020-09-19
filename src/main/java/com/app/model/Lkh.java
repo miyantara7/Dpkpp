@@ -15,8 +15,9 @@ import javax.persistence.TemporalType;
 public class Lkh extends BaseModel {
 
 	@Temporal(TemporalType.DATE)
-	private Date date;
-	
+	private Date endDate;
+	@Temporal(TemporalType.DATE)
+	private Date valDate;
 	@ManyToOne
 	@JoinColumn(name = "person_id")
 	private Person person;
@@ -30,12 +31,33 @@ public class Lkh extends BaseModel {
 	private String typeFile;
 	@Column(columnDefinition="TEXT")
 	private String fileName;
-	
-	public Date getDate() {
-		return date;
+	@Column(columnDefinition="TEXT")
+	private String hasil;
+	@Column(columnDefinition="TEXT")
+	private String laporan;
+	public String getHasil() {
+		return hasil;
 	}
-	public void setDate(Date date) {
-		this.date = date;
+	public void setHasil(String hasil) {
+		this.hasil = hasil;
+	}
+	public String getLaporan() {
+		return laporan;
+	}
+	public void setLaporan(String laporan) {
+		this.laporan = laporan;
+	}
+	public Date getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+	public Date getValDate() {
+		return valDate;
+	}
+	public void setValDate(Date valDate) {
+		this.valDate = valDate;
 	}
 	public Person getPerson() {
 		return person;
@@ -67,6 +89,4 @@ public class Lkh extends BaseModel {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-	
-	
 }

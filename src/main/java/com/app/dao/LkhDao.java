@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.app.model.Lkh;
 import com.app.pojo.PojoLkh;
+import com.app.pojo.PojoPersonLkh;
 
 @Repository
 public class LkhDao extends BaseDao implements BaseMasterDao {
@@ -27,43 +28,72 @@ public class LkhDao extends BaseDao implements BaseMasterDao {
 		
 	}
 	
+//	public String getQueryListLkh(String inquiry) {
+//		StringBuilder sb = new StringBuilder();
+//		sb.append("select tl.id,tl.description,tp.nip,tp.\"name\",tu.\"name\" units,tp2.\"name\" positions,tl.status " ) 
+//				"from tb_lkh tl " ) 
+//				"join tb_person tp ON tl.person_id = tp.id" ) 
+//				"join tb_unit_position tup on tp.unit_position_id = tup.id " ) 
+//				"join tb_unit tu on tup.unit_id = tu.id " ) 
+//				"join tb_position tp2 on tp2.id = tup.position_id " ) 
+//				"where tu.unit_id = (" ) 
+//				"select tup2.unit_id from tb_unit_position tup2 " ) 
+//				"join tb_person tp3 on tup2.id = tp3.unit_position_id " ) 
+//				"where tp3.id = :personId) and " ) 
+//				"(select tp5.\"level\" from tb_unit_position tup3" ) 
+//				"join tb_person tp4 on tup3.id = tp4.unit_position_id " ) 
+//				"join tb_position tp5 on tup3.position_id = tp5.id " ) 
+//				"where tp4.id = :personId) >= tp2.level ) as l " )
+//				"WHERE 1=1 ");
+//		
+//		  if (inquiry != null && !inquiry.isEmpty()) {
+//			   sb.append(" AND POSITION(LOWER('").append(inquiry)
+//			   .append("') in LOWER(CONCAT(").append("l.id,l.description,l.nip,l.name,l.units,l.positions,l.status")
+//			     .append("))) > 0");
+//			  }
+//		
+//		
+//		return sb.toString();
+//	}
+	
 	public String getQueryListLkh(String inquiry) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select tl.id,tl.description,tp.nip,tp.\"name\",tu.\"name\" units,tp2.\"name\" positions,tl.status \r\n" + 
-				"from tb_lkh tl \r\n" + 
-				"join tb_person tp ON tl.person_id = tp.id\r\n" + 
-				"join tb_unit_position tup on tp.unit_position_id = tup.id \r\n" + 
-				"join tb_unit tu on tup.unit_id = tu.id \r\n" + 
-				"join tb_position tp2 on tp2.id = tup.position_id \r\n" + 
-				"where tu.unit_id = (\r\n" + 
-				"select tup2.unit_id from tb_unit_position tup2 \r\n" + 
-				"join tb_person tp3 on tup2.id = tp3.unit_position_id \r\n" + 
-				"where tp3.id = :personId) and \r\n" + 
-				"(select tp5.\"level\" from tb_unit_position tup3\r\n" + 
-				"join tb_person tp4 on tup3.id = tp4.unit_position_id \r\n" + 
-				"join tb_position tp5 on tup3.position_id = tp5.id \r\n" + 
-				"where tp4.id = :personId) >= tp2.level ) as l " +
-				"WHERE 1=1 ");
-		
-		  if (inquiry != null && !inquiry.isEmpty()) {
-			   sb.append(" AND POSITION(LOWER('").append(inquiry)
-			   .append("') in LOWER(CONCAT(").append("l.id,l.description,l.nip,l.name,l.units,l.positions,l.status")
-			     .append("))) > 0");
-			  }
-		
-		
+		sb.append("with tl as (select tl.id,tl.description,tp.nip,tp.\"name\" pName,tu.\"name\" uName,");
+		sb.append("tp2.\"name\" lName,tl.status,tu.unit_id,tp2.\"level\" ");
+		sb.append("from tb_lkh tl ");
+		sb.append("join tb_person tp ON tl.person_id = tp.id ");
+		sb.append("join tb_unit_position tup on tp.unit_position_id = tup.id ");
+		sb.append("join tb_unit tu on tup.unit_id = tu.id ");
+		sb.append("join tb_position tp2 on tp2.id = tup.position_id ");
+		sb.append("),");
+		sb.append("tp as(");
+		sb.append("select tup2.unit_id,tp4.\"level\" from tb_unit_position tup2 ");
+		sb.append("join tb_person tp3 on tup2.id = tp3.unit_position_id ");
+		sb.append("join tb_position tp4 on tup2.position_id = tp4.id ");
+		sb.append("where tp3.id = :personId) ");
+		sb.append("select tl.id,tl.description,tl.nip,tl.pName ,tl.uName ,tl.lName ,tl.status ");
+		sb.append("from tl,tp ");
+		sb.append("where tl.unit_id = tp.unit_id and tp.level >= tl.\"level\" ) as l ");
+		sb.append("WHERE 1=1 ");
+
+		if (inquiry != null && !inquiry.isEmpty()) {
+			sb.append(" AND POSITION(LOWER('").append(inquiry).append("') in LOWER(CONCAT(")
+					.append("l.id,l.description,l.nip,l.pName,l.uName,l.lName,l.status").append("))) > 0");
+		}
+
 		return sb.toString();
 	}
+	
 	@SuppressWarnings("unchecked")
-	public List<PojoLkh> getLkhByService(String personId,String inquiry,int page,int limit) throws Exception{
-		String sql = bBuilder("SELECT l.id,l.description,l.nip,l.name,l.units,l.positions,l.status FROM ( ");
+	public List<PojoPersonLkh> getLkhByService(String personId,String inquiry,int page,int limit) throws Exception{
+		String sql = bBuilder("SELECT l.id,l.description,l.nip,l.pName,l.uName,l.lName,l.status FROM ( ");
 		List<Object[]> results = em.createNativeQuery(sql + getQueryListLkh(inquiry))
 				.setParameter("personId", personId)
 				.setFirstResult((page-1)*limit)
 				.setMaxResults(limit)
 				.getResultList();
 		
-		return bMapperList(results,PojoLkh.class, "id","desc","nip","name","unit","position","status");
+		return bMapperList(results,PojoPersonLkh.class, "id","desc","nip","name","unit","position","status");
 	}
 	
 	public Integer getCountLkhByService(String personId,String inquiry) throws Exception {	
@@ -85,4 +115,14 @@ public class LkhDao extends BaseDao implements BaseMasterDao {
 		return !list.isEmpty() ? list.get(0) : null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public PojoLkh getLkhById(String id) throws Exception{
+		String sql = bBuilder("SELECT id,end_date\\:\\:text,val_date\\:\\:text,file_name,type_file,hasil,laporan from tb_lkh ",
+				"Where id = :id ");
+		List<Object[]> results = em.createNativeQuery(sql)
+				.setParameter("id", id)
+				.getResultList();
+		
+		return bMapperList(results,PojoLkh.class, "id","endDate","valDate","fileName","typeFile","hasil","laporan").get(0);
+	}
 }

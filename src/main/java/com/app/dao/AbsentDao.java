@@ -28,7 +28,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		em.remove(entity);
 	}
 	
-	public String getQueryForAbsent() throws Exception{
+	public String getQueryForAbsent(String inquiry) throws Exception{
 		StringBuilder sb = new StringBuilder();
 		sb.append("select person.id,person.nip,person.name, " ) 
 		.append("(case when person.unit is null then '-' else person.unit end) as unit, ") 
@@ -37,7 +37,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		.append("(case when absents.date_out\\:\\:text is null then '-' else absents.date_out\\:\\:text end) as date_out," ) 
 		.append("(case when absents.location_absen_in is null then '-' else absents.location_absen_in end) as location_in," ) 
 		.append("(case when absents.location_absen_out is null then '-' else absents.location_absen_out end) as location_out," ) 
-		.append("(case when absents.status is null then '-' end) as status " ) 
+		.append("(case when absents.status is null then '-' else absents.status end) as status " ) 
 		.append("from "  )
 		.append("	(select tp.id , tp.nip , tp.name, tu.\"name\" unit,tp2.\"name\" positions ") 
 		.append("	from tb_person tp ")
@@ -49,63 +49,8 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		.append("	ta.location_absen_in ,ta.location_absen_out " )
 		.append("	from tb_person tp "  )
 		.append("	join tb_absent ta on tp.id = ta.person_id "  )
-		.append("	where ta.date_in\\:\\:date = current_date and ta.lov_absent_id is null " )
-		.append("   or ta.date_out\\:\\:date = current_date and ta.lov_absent_id is null) as absents "  )
-		.append("on person.id = absents.id ) as absen ")
-		.append("WHERE 1=1 ");
-		
-		return sb.toString();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<PojoAbsent> getAbsentByPaging(int page, int limit) throws Exception {	
-		String sql = bBuilder("Select absen.id,absen.nip,absen.name,absen.unit,absen.positions,"
-				+ "absen.date_in,absen.date_out,absen.location_in,"
-				+ "absen.location_out,absen.status "
-				+ "FROM ( ");
-		
-		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsent())
-				.setFirstResult((page-1)*limit)
-				.setMaxResults(limit)
-				.getResultList();
-		
-		return !list.isEmpty() ? bMapperList(list, PojoAbsent.class, "id","nip","nama","unit","position","dateIn","dateOut","locationIn","locationOut","status") : null;
-	}
-	
-	public Integer getCountAbsentByPaging(int page, int limit) throws Exception {	
-		String sql = bBuilder("Select count(*) "
-				+ "FROM ( ");
-		
-		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsent())
-				.setFirstResult((page-1) * limit)
-				.setMaxResults(limit).getSingleResult();
-		
-		return value.intValue();
-	}
-	
-	public String getQueryForAbsentBySearch(String inquiry) throws Exception{
-		StringBuilder sb = new StringBuilder();
-		sb.append("select person.id,person.nip,person.name, " ) 
-		.append("(case when person.unit is null then '-' else person.unit end) as unit, ") 
-		.append("(case when person.positions is null then '-' else person.positions end) as positions,")
-		.append("(case when absents.date_in\\:\\:text is null then '-' else absents.date_in\\:\\:text end) as date_in," ) 
-		.append("(case when absents.date_out\\:\\:text is null then '-' else absents.date_out\\:\\:text end) as date_out," ) 
-		.append("(case when absents.location_absen_in is null then '-' else absents.location_absen_in end) as location_in," ) 
-		.append("(case when absents.location_absen_out is null then '-' else absents.location_absen_out end) as location_out," ) 
-		.append("(case when absents.status is null then '-' end) as status " ) 
-		.append("from "  )
-		.append("	(select tp.id , tp.nip , tp.name, tu.\"name\" unit,tp2.\"name\" positions ") 
-		.append("	from tb_person tp ")
-		.append("	left join tb_unit_position tup on tp.unit_position_id  = tup.id " )
-		.append("	left join tb_unit tu on tu.id = tup.unit_id " )
-		.append("	left join tb_position tp2 on tup.position_id = tp2.id) as person "  )
-		.append("left join "  )
-		.append("	(select tp.id , tp.nip , tp.\"name\",ta.date_in,ta.date_out,ta.status, "  )
-		.append("	ta.location_absen_in ,ta.location_absen_out " )
-		.append("	from tb_person tp "  )
-		.append("	join tb_absent ta on tp.id = ta.person_id "  )
-		.append("	where ta.date_in\\:\\:date = current_date and ta.lov_absent_id is null " )
-		.append("   or ta.date_out\\:\\:date = current_date and ta.lov_absent_id is null) as absents "  )
+		.append("	where ta.date_in\\:\\:date = current_date  " )
+		.append("   or ta.date_out\\:\\:date = current_date ) as absents "  )
 		.append("on person.id = absents.id ) as absen ")
 		.append("WHERE 1=1 ");
 		
@@ -117,7 +62,34 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 			     .append("))) > 0");
 			  }
 		
+		
 		return sb.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<PojoAbsent> getAbsentByPaging(int page, int limit) throws Exception {	
+		String sql = bBuilder("Select absen.id,absen.nip,absen.name,absen.unit,absen.positions,"
+				+ "absen.date_in,absen.date_out,absen.location_in,"
+				+ "absen.location_out,absen.status "
+				+ "FROM ( ");
+		
+		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsent(null))
+				.setFirstResult((page-1)*limit)
+				.setMaxResults(limit)
+				.getResultList();
+		
+		return !list.isEmpty() ? bMapperList(list, PojoAbsent.class, "id","nip","nama","unit","position","dateIn","dateOut","locationIn","locationOut","status") : null;
+	}
+	
+	public Integer getCountAbsentByPaging(int page, int limit) throws Exception {	
+		String sql = bBuilder("Select count(*) "
+				+ "FROM ( ");
+		
+		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsent(null))
+				.setFirstResult((page-1) * limit)
+				.setMaxResults(limit).getSingleResult();
+		
+		return value.intValue();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -127,7 +99,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 				+ "absen.location_out,absen.status "
 				+ "FROM ( ");
 		
-		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsentBySearch(inquiry))
+		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsent(inquiry))
 				.setFirstResult((page-1)*limit)
 				.setMaxResults(limit)
 				.getResultList();
@@ -139,7 +111,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		String sql = bBuilder("Select count(*) "
 				+ "FROM ( ");
 		
-		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsentBySearch(inquiry))
+		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsent(inquiry))
 				.setFirstResult((page-1) * limit)
 				.setMaxResults(limit).getSingleResult();
 		

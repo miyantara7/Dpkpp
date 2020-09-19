@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.app.dao.LkhDao;
 import com.app.helper.SessionHelper;
 import com.app.model.Lkh;
+import com.app.model.Person;
+import com.app.pojo.PojoLkh;
 import com.app.pojo.PojoPagination;
 
 @Service
@@ -59,6 +63,22 @@ public class LkhService extends BaseService  {
 		PojoPagination pojoLkh = new PojoPagination();
 		pojoLkh.setData(lkhDao.getLkhByService(SessionHelper.getPerson().getId(),inquiry,page,limit));
 		pojoLkh.setCount(lkhDao.getCountLkhByService(SessionHelper.getPerson().getId(),inquiry));
+		return pojoLkh;
+	}
+	
+	public PojoLkh getLkhById(String id) throws Exception{
+		
+		PojoLkh pojoLkh = lkhDao.getLkhById(id);
+		String filePath = pojoLkh.getId()+ "_"+pojoLkh.getFileName();
+		File file = new File(path + filePath);
+			if (file.exists()) {
+				try {
+					pojoLkh.setFile(Base64.getEncoder()
+							.encodeToString(FileUtils.readFileToByteArray(file)));
+				} catch (IOException e) {
+					throw e;
+				}
+			}	
 		return pojoLkh;
 	}
 	
