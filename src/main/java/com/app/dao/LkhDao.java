@@ -107,13 +107,13 @@ public class LkhDao extends BaseDao implements BaseMasterDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<PojoLkh> getLkhByServiceMobile(String personId,String inquiry) throws Exception{
-		String sql = bBuilder("SELECT l.id,l.description,l.nip,l.name,l.units,l.positions,l.status FROM ( ");
+	public List<PojoPersonLkh> getLkhByServiceMobile(String personId,String inquiry) throws Exception{
+		String sql = bBuilder("SELECT l.id,l.description,l.nip,l.pName,l.uName,l.lName,l.status FROM ( ");
 		List<Object[]> results = em.createNativeQuery(sql + getQueryListLkh(inquiry))
 				.setParameter("personId", personId)
 				.getResultList();
 		
-		return bMapperList(results,PojoLkh.class, "id","desc","nip","name","unit","position","status");
+		return bMapperList(results,PojoPersonLkh.class, "id","desc","nip","name","unit","position","status");
 	}
 	
 	@SuppressWarnings("unchecked")
