@@ -183,8 +183,8 @@ public class LoginService extends BaseService implements UserDetailsService {
 		return new LoginResponse(token,userDetails.getUser());	
 	}
 	
-	public void logOutMobile() throws Exception{
-		String username = SessionHelper.getUser().getUsername();
+	public void logOutMobile(Login login) throws Exception{
+		String username = login.getUsername();
 		User user = userDaoHibernate.getUserByUsername(username);
 		try {
 			if (user == null) {

@@ -48,7 +48,7 @@ public class LoginController {
 	@Transactional
 	public ResponseEntity<?> logOutMobile(@RequestBody Login login) throws Exception {
 		try {
-			userDetailService.logOutMobile();
+			userDetailService.logOutMobile(login);
 			return new ResponseEntity<>("Success",HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
