@@ -136,4 +136,43 @@ public class LkhDao extends BaseDao implements BaseMasterDao {
 		return bMapperList(results,PojoLkh.class, "id","endDate","valDate","fileName","typeFile","hasil","laporan").get(0);
 	}
 	
+	public String getQueryListLkhPerson(String inquiry) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select tl.id,tl.description,tp.nip,tp.\"name\" pName,tu.\"name\" uName,");
+		sb.append("tp2.\"name\" lName,tl.status ");
+		sb.append("from tb_lkh tl ");
+		sb.append("join tb_person tp ON tl.person_id = tp.id ");
+		sb.append("join tb_unit_position tup on tp.unit_position_id = tup.id ");
+		sb.append("join tb_unit tu on tup.unit_id = tu.id ");
+		sb.append("join tb_position tp2 on tp2.id = tup.position_id ");
+		sb.append("WHERE tp.id = :personId ) as l ");
+		sb.append("WHERE 1=1 ");
+
+		if (inquiry != null && !inquiry.isEmpty()) {
+			sb.append(" AND POSITION(LOWER('").append(inquiry).append("') in LOWER(CONCAT(")
+					.append("l.id,l.description,l.nip,l.pName,l.uName,l.lName,l.status").append("))) > 0");
+		}
+
+		return sb.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<PojoPersonLkh> getLkhPersonById(String personId,String inquiry) throws Exception{
+		String sql = bBuilder("SELECT l.id,l.description,l.nip,l.pName,l.uName,l.lName,l.status FROM ( ");
+		List<Object[]> results = em.createNativeQuery(sql + getQueryListLkhPerson(inquiry))
+				.setParameter("personId", personId)
+				.getResultList();
+		
+		return bMapperList(results,PojoPersonLkh.class, "id","desc","nip","name","unit","position","status");
+	}
+	
+	public Integer getCountLkhPersonById(String personId,String inquiry) throws Exception {	
+		String sql = bBuilder("Select count(*) FROM ( ");
+		
+		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryListLkhPerson(inquiry))
+				.setParameter("personId", personId)
+				.getSingleResult();
+		
+		return value.intValue();
+	}
 }

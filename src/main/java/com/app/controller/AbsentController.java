@@ -34,6 +34,7 @@ public class AbsentController {
 		try {			
 			return new ResponseEntity<>(absentService.getAbsentByPaging(page,limit), HttpStatus.OK);
 		} catch (Exception e) {
+			e.printStackTrace();
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}

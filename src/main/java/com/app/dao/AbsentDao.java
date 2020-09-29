@@ -67,33 +67,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<PojoAbsent> getAbsentByPaging(int page, int limit) throws Exception {	
-		String sql = bBuilder("Select absen.id,absen.nip,absen.name,absen.unit,absen.positions,"
-				+ "absen.date_in,absen.date_out,absen.location_in,"
-				+ "absen.location_out,absen.status "
-				+ "FROM ( ");
-		
-		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsent(null))
-				.setFirstResult((page-1)*limit)
-				.setMaxResults(limit)
-				.getResultList();
-		
-		return !list.isEmpty() ? bMapperList(list, PojoAbsent.class, "id","nip","nama","unit","position","dateIn","dateOut","locationIn","locationOut","status") : null;
-	}
-	
-	public Integer getCountAbsentByPaging(int page, int limit) throws Exception {	
-		String sql = bBuilder("Select count(*) "
-				+ "FROM ( ");
-		
-		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsent(null))
-				.setFirstResult((page-1) * limit)
-				.setMaxResults(limit).getSingleResult();
-		
-		return value.intValue();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<PojoAbsent> getAbsentBySearch(int page, int limit,String inquiry) throws Exception {	
+	public List<?> getAbsentByPaging(int page, int limit,String inquiry) throws Exception {	
 		String sql = bBuilder("Select absen.id,absen.nip,absen.name,absen.unit,absen.positions,"
 				+ "absen.date_in,absen.date_out,absen.location_in,"
 				+ "absen.location_out,absen.status "
@@ -104,16 +78,15 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 				.setMaxResults(limit)
 				.getResultList();
 		
-		return !list.isEmpty() ? bMapperList(list, PojoAbsent.class, "id","nip","nama","unit","position","dateIn","dateOut","locationIn","locationOut","status") : null;
+		return !list.isEmpty() ? bMapperList(list, PojoAbsent.class, "id","nip","nama","unit","position","dateIn","dateOut","locationIn","locationOut","status") : list;
 	}
 	
-	public Integer getCountAbsentBySearch(int page, int limit,String inquiry) throws Exception {	
+	public Integer getCountAbsentByPaging(String inquiry) throws Exception {	
 		String sql = bBuilder("Select count(*) "
 				+ "FROM ( ");
 		
 		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsent(inquiry))
-				.setFirstResult((page-1) * limit)
-				.setMaxResults(limit).getSingleResult();
+				.getSingleResult();
 		
 		return value.intValue();
 	}

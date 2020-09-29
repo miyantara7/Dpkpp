@@ -111,4 +111,18 @@ public class LkhService extends BaseService  {
 			throw e;
 		}
 	}
+	
+	public PojoPagination getListLkhPersonById() throws Exception{
+		PojoPagination pojoLkh = new PojoPagination();
+		pojoLkh.setData(lkhDao.getLkhPersonById(SessionHelper.getPerson().getId(),null));
+		pojoLkh.setCount(lkhDao.getCountLkhPersonById(SessionHelper.getPerson().getId(),null));
+		return pojoLkh;
+	}
+	
+	public PojoPagination getListLkhPersonBySearch(String inquiry) throws Exception{
+		PojoPagination pojoLkh = new PojoPagination();
+		pojoLkh.setData(lkhDao.getLkhPersonById(SessionHelper.getPerson().getId(),inquiry));
+		pojoLkh.setCount(lkhDao.getCountLkhPersonById(SessionHelper.getPerson().getId(),inquiry));
+		return pojoLkh;
+	}
 }

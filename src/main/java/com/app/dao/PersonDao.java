@@ -67,39 +67,6 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 	public <T> void delete(T entity) throws Exception{
 		em.remove(entity);
 	}
-
-	@SuppressWarnings("unchecked")
-	public List<?> getAllPersonByPaging(int page,int limit)throws Exception{
-		String sql = bBuilder("select tp.id ,tp.nip , tp.\"name\" ,tu.\"name\" unit,tp2.\"name\" positions "+
-				"from tb_person tp \r\n" + 
-				"left join tb_unit_position tup on tp.unit_position_id = tup.id\r\n" + 
-				"left join tb_unit tu on tup.unit_id = tu.id \r\n" + 
-				"left join tb_position tp2 on tup.position_id = tp2.id");
-		
-		List<Object[]> list = em.createNativeQuery(sql)
-				.setFirstResult((page-1) * limit)
-				.setMaxResults(limit)
-				.getResultList();
-		
-		return !list.isEmpty() ? bMapperList(list, PojoPerson.class, "id","nip","name","unit","position") : list;
-	}
-	
-	public Integer getCountPersonByPaging(int page,int limit)throws Exception{
-		String sql = bBuilder("Select count (*) FROM ("+
-				"select tp.id ,tp.nip , tp.\"name\" ,tu.\"name\" unit,tp2.\"name\" positions "+
-				"from tb_person tp \r\n" + 
-				"join tb_unit_position tup on tp.unit_position_id = tup.id\r\n" + 
-				"join tb_unit tu on tup.unit_id = tu.id \r\n" + 
-				"join tb_position tp2 on tup.position_id = tp2.id )"+
-				"as person");
-		
-		BigInteger value = (BigInteger) em.createNativeQuery(sql)
-				.setFirstResult((page-1) * limit)
-				.setMaxResults(limit).getSingleResult();
-		
-		return value.intValue();
-	}
-	
 	
 	public String getQueryForSearch(String inquiry) throws Exception{
 		StringBuilder sb = new StringBuilder();
@@ -119,7 +86,7 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<?> getAllPersonBySearch(int page,int limit,String inquiry)throws Exception{
+	public List<?> getAllPersonByPaging(int page,int limit,String inquiry)throws Exception{
 		String sql = bBuilder("Select p.id,p.nip,p.name,p.unit,p.positions "
 				+ "FROM (select tp.id ,tp.nip , tp.name ,tu.name unit,tp2.name positions " );	  
 		List<Object[]> list = em.createNativeQuery(sql + getQueryForSearch(inquiry))
@@ -130,13 +97,11 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 		return !list.isEmpty() ? bMapperList(list, PojoPerson.class, "id","nip","name","unit","position") : list;
 	}
 	
-	public Integer getCountPersonBySearch(int page,int limit,String inquiry)throws Exception{
+	public Integer getCountPersonByPaging(String inquiry)throws Exception{
 		String sql = bBuilder("Select count (*) "
 				+ "FROM (select tp.id ,tp.nip , tp.name ,tu.name unit,tp2.name positions " );
 		
-		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForSearch(inquiry))
-				.setFirstResult((page-1) * limit)
-				.setMaxResults(limit).getSingleResult();
+		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForSearch(inquiry)).getSingleResult();
 		
 		return value.intValue();
 	}

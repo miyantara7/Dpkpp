@@ -159,15 +159,15 @@ public class PersonService extends BaseService {
 
 	public PojoPagination getAllPersonByPaging(int page, int limit) throws Exception {
 		PojoPagination pojo = new PojoPagination();
-		pojo.setData(personDao.getAllPersonByPaging(page, limit));
-		pojo.setCount(personDao.getCountPersonByPaging(page, limit));
+		pojo.setData(personDao.getAllPersonByPaging(page, limit,null));
+		pojo.setCount(personDao.getCountPersonByPaging(null));
 		return pojo;
 	}
 
 	public PojoPagination getAllPersonBySearch(int page, int limit, String inquiry) throws Exception {
 		PojoPagination pojo = new PojoPagination();
-		pojo.setData(personDao.getAllPersonBySearch(page, limit, inquiry));
-		pojo.setCount(personDao.getCountPersonBySearch(page, limit, inquiry));
+		pojo.setData(personDao.getAllPersonByPaging(page, limit, inquiry));
+		pojo.setCount(personDao.getCountPersonByPaging(inquiry));
 		return pojo;
 	}
 

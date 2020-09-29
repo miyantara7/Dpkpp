@@ -90,4 +90,21 @@ public class LkhController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	@GetMapping("/person")
+	public ResponseEntity<?> getLkhPersonById() throws Exception {
+		try {			
+			return new ResponseEntity<>(lkhService.getListLkhPersonById(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/person/search")
+	public ResponseEntity<?> getLkhPersonById(String inquiry) throws Exception {
+		try {			
+			return new ResponseEntity<>(lkhService.getListLkhPersonBySearch(inquiry), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 }
