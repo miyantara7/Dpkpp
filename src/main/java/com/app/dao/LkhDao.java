@@ -133,7 +133,7 @@ public class LkhDao extends BaseDao implements BaseMasterDao {
 				.setParameter("id", id)
 				.getResultList();
 		
-		return bMapperList(results,PojoLkh.class, "id","endDate","valDate","fileName","typeFile","hasil","laporan").get(0);
+		return bMapperList(results,PojoLkh.class, "id","endDate","valDate","fileName","typeFile","hasil","lapooran").get(0);
 	}
 	
 	public String getQueryListLkhPerson(String inquiry) {
