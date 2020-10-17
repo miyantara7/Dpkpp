@@ -36,6 +36,21 @@ public class FolderService {
 	@Value("${path.target.photo}")
 	private String src;
 	
+	@Value("${path.report.file}")
+	private String file;
+	
+	@Value("${path.report.photo.depan}")
+	private String foto_depan;
+	
+	@Value("${path.report.photo.samping}")
+	private String foto_samping;
+	
+	@Value("${path.report.photo.dalam}")
+	private String foto_dalam;
+	
+	@Value("${path.report.photo.belakang}")
+	private String foto_belakang;
+	
 	@Bean
 	public void createFolderStorage() {
 		File files = null;
@@ -56,8 +71,29 @@ public class FolderService {
 		files = new File(report);
 		if (!files.exists()) {
 			if (files.mkdirs()) {
-				System.out.println("create folder report success !");
+				System.out.println("create folder report success !");		
 			}
+		}
+		
+		files = new File(file);
+		if (files.mkdirs()) {
+			System.out.println("create folder report file success !");
+		}
+		files = new File(foto_depan);
+		if (files.mkdirs()) {
+			System.out.println("create folder report foto_depan success !");
+		}
+		files = new File(foto_samping);
+		if (files.mkdirs()) {
+			System.out.println("create folder report foto_samping success !");
+		}
+		files = new File(foto_dalam);
+		if (files.mkdirs()) {
+			System.out.println("create folder report foto_dalam success !");
+		}
+		files = new File(foto_belakang);
+		if (files.mkdirs()) {
+			System.out.println("create folder report foto_belakang success !");
 		}
 
 		files = new File(absen);
