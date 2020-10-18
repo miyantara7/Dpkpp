@@ -26,6 +26,7 @@ public class LppController {
 	
 	@PostMapping
 	@Transactional
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<?> add(MultipartFile file,String lpp) throws Exception {
 		try {
 			lppService.add(file,lpp);
@@ -47,12 +48,53 @@ public class LppController {
 //		}
 //	}
 	
-//	@GetMapping(value = "/get")
-//	public ResponseEntity<?> getListLpp() throws Exception {
-//		try {			
-//			return new ResponseEntity<>(lppService.getListLpp(), HttpStatus.OK);
-//		} catch (Exception e) {
-//			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//		}
-//	}
+	@GetMapping(value = "/get")
+	public ResponseEntity<?> getListLppByPersonId() throws Exception {
+		try {			
+			return new ResponseEntity<>(lppService.getLppByPersonId(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping(value = "/details")
+	public ResponseEntity<?> getListLppByPersonId(@RequestParam String id) throws Exception {
+		try {			
+			return new ResponseEntity<>(lppService.getProgressLppById(id), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping(value = "/progress-lpp/details")
+	public ResponseEntity<?> getDetailsLaporanById(@RequestParam String id) throws Exception {
+		try {			
+			return new ResponseEntity<>(lppService.getDetailsLaporanById(id), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping(value = "/progress-lpp/details/upload-foto")
+	@Transactional
+	public ResponseEntity<?> uploadFotoLaporan(@RequestParam String id,MultipartFile depan,MultipartFile samping,
+			MultipartFile dalam,MultipartFile belakang) throws Exception {
+		try {
+			lppService.uploadFotoLaporan(id,depan,samping,dalam,belakang);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PostMapping(value = "/progress-lpp/details/done")
+	@Transactional
+	public ResponseEntity<?> updateLaporanIsDone(@RequestParam String id) throws Exception {
+		try {
+			lppService.updateLaporanIsDone(id);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 }

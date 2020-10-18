@@ -1,6 +1,11 @@
 package com.app.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
+
+import com.app.model.Lpp;
+import com.app.model.PersonLpp;
 
 @Repository
 public class PersonLppDao extends BaseDao implements BaseMasterDao {
@@ -21,6 +26,15 @@ public class PersonLppDao extends BaseDao implements BaseMasterDao {
 	public <T> void delete(T entity) throws Exception {
 	    em.remove(entity);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public PersonLpp getById(String id) throws Exception{
+		List<PersonLpp> results = em.createQuery("FROM PersonLpp where id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return !results.isEmpty() ? results.get(0) : null;
 	}
 
 }

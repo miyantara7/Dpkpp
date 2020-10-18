@@ -26,7 +26,9 @@ public class PersonLpp extends BaseModel {
 	
 	private Date startDate;
 	
-	private Date endDate;
+	private Timestamp endDate;
+	
+	private Timestamp verificationDate;
 	
 	public Person getPerson() {
 		return person;
@@ -68,11 +70,19 @@ public class PersonLpp extends BaseModel {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	public Timestamp getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(Timestamp endDate) {
 		this.endDate = endDate;
+	}
+
+	public Timestamp getVerificationDate() {
+		return verificationDate;
+	}
+
+	public void setVerificationDate(Timestamp verificationDate) {
+		this.verificationDate = verificationDate;
 	}
 }

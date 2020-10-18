@@ -1,5 +1,6 @@
 package com.app.model;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 import javax.persistence.Column;
@@ -7,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tb_lpp")
@@ -33,6 +37,9 @@ public class Lpp extends BaseModel {
 	@ManyToOne
 	@JoinColumn(name = "person_id")
 	private Person person;
+	@Transient
+	@JsonIgnore
+	private Date startDate;
 	public String getTypeFile() {
 		return typeFile;
 	}
@@ -98,5 +105,11 @@ public class Lpp extends BaseModel {
 	}
 	public void setPerson(Person person) {
 		this.person = person;
+	}
+	public Date getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
 }
