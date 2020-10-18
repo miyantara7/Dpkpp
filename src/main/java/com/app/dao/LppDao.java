@@ -1,6 +1,11 @@
 package com.app.dao;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
+
+import com.app.model.Lpp;
+import com.app.pojo.PojoPersonLkh;
 
 @Repository
 public class LppDao extends BaseDao implements BaseMasterDao{
@@ -21,5 +26,15 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Lpp getById(String id) throws Exception{
+		List<Lpp> results = em.createQuery("FROM Lpp where id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return !results.isEmpty() ? results.get(0) : null;
+	}
 
+	
 }

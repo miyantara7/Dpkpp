@@ -17,6 +17,7 @@ import com.app.model.Person;
 import com.app.model.PersonLpp;
 import com.app.model.Progressing;
 import com.app.pojo.PojoLpp;
+import com.app.pojo.PojoPagination;
 
 @Service
 public class LppService extends BaseService {
@@ -39,6 +40,15 @@ public class LppService extends BaseService {
 	@Autowired
 	private LaporanService laporanService;
 	
+	public Lpp getById(String id) throws Exception{
+		Lpp lpp = lppDao.getById(id);
+		if(lpp != null) {
+			return lpp;
+		}else {
+			throw new Exception("LPP not exist !");
+		}
+	}
+	
 	public void add(MultipartFile file,String pojoLpps) throws Exception{	
 		try {
 			PojoLpp pojoLpp = new PojoLpp();
@@ -48,10 +58,10 @@ public class LppService extends BaseService {
 			lpp.setFileName(file.getOriginalFilename());
 			lpp.setCreatedBy(SessionHelper.getPerson().getName());
 			lpp.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+			lpp.setPerson(SessionHelper.getPerson());
 			lppDao.save(lpp);
 			fileService.addFileReport(file, lpp);
 			addDetail(pojoLpp);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw e;
@@ -69,15 +79,29 @@ public class LppService extends BaseService {
 				personLppService.add(personLpp);
 				
 				List<Progressing> listProgress = progressingService.getAll();
-				for(Progressing progress : listProgress) {
-					Laporan laporan = new Laporan();
-					laporan.setPersonLpp(personLpp);
-					laporan.setProgressing(progress);
-					laporanService.add(laporan);
+				if (!listProgress.isEmpty()) {
+					for (Progressing progress : listProgress) {
+						Laporan laporan = new Laporan();
+						laporan.setPersonLpp(personLpp);
+						laporan.setProgressing(progress);
+						laporanService.add(laporan);
+					}
+				} else {
+					throw new Exception("Table Progressing is empty !");
 				}
 			}
 		}
 
 	}
 	
+//	public PojoPagination getListLkhMobile() throws Exception{
+//		PojoPagination pojoLkh = new PojoPagination();
+//		pojoLkh.setData(lppDao.getLppByPersonId(SessionHelper.getPerson().getId(),null));
+//		pojoLkh.setCount(lppDao.getCountLppByPersonId(SessionHelper.getPerson().getId(),null));
+//		return pojoLkh;
+//	}
+	
+	public void addVerification(String id) throws Exception{
+		
+	}
 }

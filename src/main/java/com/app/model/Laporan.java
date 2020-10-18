@@ -1,5 +1,8 @@
 package com.app.model;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -39,6 +42,8 @@ public class Laporan extends BaseModel{
 	@Column(name = "description")
 	private String desc;
 	private Boolean status = false;
+	private Timestamp uploadDate;
+	private Timestamp verificationDate;
 	public PersonLpp getPersonLpp() {
 		return personLpp;
 	}
@@ -133,5 +138,21 @@ public class Laporan extends BaseModel{
 
 	public void setStatus(Boolean status) {
 		this.status = status;
+	}
+
+	public Timestamp getUploadDate() {
+		return uploadDate;
+	}
+
+	public void setUploadDate(Timestamp uploadDate) {
+		this.uploadDate = uploadDate;
+	}
+
+	public Timestamp getVerificationDate() {
+		return verificationDate;
+	}
+
+	public void setVerificationDate(Timestamp verificationDate) {
+		this.verificationDate = verificationDate;
 	}
 }

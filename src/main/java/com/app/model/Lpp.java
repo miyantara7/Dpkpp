@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -28,6 +30,9 @@ public class Lpp extends BaseModel {
 	private String fileName;
 	private String createdBy;
 	private Timestamp createdAt;
+	@ManyToOne
+	@JoinColumn(name = "person_id")
+	private Person person;
 	public String getTypeFile() {
 		return typeFile;
 	}
@@ -87,5 +92,11 @@ public class Lpp extends BaseModel {
 	}
 	public void setCreatedAt(Timestamp createdAt) {
 		this.createdAt = createdAt;
+	}
+	public Person getPerson() {
+		return person;
+	}
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 }
