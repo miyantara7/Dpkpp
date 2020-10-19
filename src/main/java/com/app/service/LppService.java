@@ -161,9 +161,10 @@ public class LppService extends BaseService {
 	public PojoLaporan getDetailsLaporanById(String id) throws Exception {
 		List<Object[]> result = lppDao.getLaporanLppById(id);
 		PojoLaporan pojoLaporan = new PojoLaporan();
-		List<Object> listFoto = new ArrayList<Object>();
 		for (Object[] o : result) {
 			pojoLaporan.setId((String) o[0]);
+			pojoLaporan.setProggress((String)o[14]);
+			pojoLaporan.setProjek((String)o[13]);
 			pojoLaporan.setName((String) o[1]);
 			pojoLaporan.setUploadDate((String) o[2]);
 			pojoLaporan.setVerificationDate((String) o[3]);
@@ -337,10 +338,9 @@ public class LppService extends BaseService {
 		return pj;
 	}
 	
-	public PojoLaporanAdmin getDetailsLaporanByIdAdmin(String id) throws Exception{
+	public PojoLaporanAdmin getDetailsLaporanByIdAdminDtl(String id) throws Exception{
 		List<Object[]> result = lppDao.getLaporanLppById(id);
 		PojoLaporanAdmin pojoLaporan = new PojoLaporanAdmin();
-		List<Object> listFoto = new ArrayList<Object>();
 		for (Object[] o : result) {
 			pojoLaporan.setId((String)o[0]);
 			pojoLaporan.setName((String)o[1]);
@@ -348,19 +348,6 @@ public class LppService extends BaseService {
 			pojoLaporan.setVerificationDate((String)o[3]);
 			pojoLaporan.setDec((String)o[4]);
 			pojoLaporan.setProyek((String)o[13]);
-			LinkedHashMap<String, Object> fotoDepan = new LinkedHashMap<String, Object>();
-			fotoDepan.put("Foto Depan", fileService.getFotoLaporan(path_foto_depan, (String)o[0],(String)o[5],(String)o[6]));
-			LinkedHashMap<String, Object> fotoSamping = new LinkedHashMap<String, Object>();
-			fotoSamping.put("Foto Samping", fileService.getFotoLaporan(path_foto_samping, (String)o[0],(String)o[7],(String)o[8]));
-			LinkedHashMap<String, Object> fotoDalam = new LinkedHashMap<String, Object>();
-			fotoDalam.put("Foto Dalam", fileService.getFotoLaporan(path_foto_dalam, (String)o[0],(String)o[9],(String)o[10]));
-			LinkedHashMap<String, Object> fotoBelakang = new LinkedHashMap<String, Object>();
-			fotoBelakang.put("Foto Belakang", fileService.getFotoLaporan(path_foto_belakang, (String)o[0],(String)o[11],(String)o[12]));
-			listFoto.add(fotoDepan);
-			listFoto.add(fotoSamping);
-			listFoto.add(fotoDalam);
-			listFoto.add(fotoBelakang);
-			pojoLaporan.setListFoto(listFoto);
 		}
 		return pojoLaporan;
 	}

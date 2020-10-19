@@ -1,6 +1,5 @@
 package com.app.pojo;
 
-import java.util.List;
 
 public class PojoLaporan {
 
@@ -13,8 +12,23 @@ public class PojoLaporan {
 	public Object fotoSamping;
 	public Object fotoBelakang;
 	public Object fotoDalam;
+	private String projek;
+	private String proggress;
 	
 	
+	
+	public String getProjek() {
+		return projek;
+	}
+	public void setProjek(String projek) {
+		this.projek = projek;
+	}
+	public String getProggress() {
+		return proggress;
+	}
+	public void setProggress(String proggress) {
+		this.proggress = proggress;
+	}
 	public Object getFotoDepan() {
 		return fotoDepan;
 	}
