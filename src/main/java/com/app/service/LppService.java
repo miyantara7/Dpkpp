@@ -364,5 +364,25 @@ public class LppService extends BaseService {
 		}
 		return pojoLaporan;
 	}
+	
+	public PojoLaporanAdmin getDetailsLaporanUser(String id) throws Exception{
+		List<Object[]> result = lppDao.getLaporanLppById(id);
+		PojoLaporanAdmin pojoLaporan = new PojoLaporanAdmin();
+		List<Object> listFoto = new ArrayList<Object>();
+		for (Object[] o : result) {
+			pojoLaporan.setId((String)o[0]);
+			pojoLaporan.setName((String)o[1]);
+			pojoLaporan.setUploadDate((String)o[2]);
+			pojoLaporan.setVerificationDate((String)o[3]);
+			pojoLaporan.setDec((String)o[4]);
+			pojoLaporan.setProyek((String)o[13]);
+			listFoto.add(fileService.getFotoLaporan(path_foto_depan, (String)o[0],(String)o[5],(String)o[6]));
+			listFoto.add(fileService.getFotoLaporan(path_foto_samping, (String)o[0],(String)o[7],(String)o[8]));
+			listFoto.add(fileService.getFotoLaporan(path_foto_dalam, (String)o[0],(String)o[9],(String)o[10]));
+			listFoto.add(fileService.getFotoLaporan(path_foto_belakang, (String)o[0],(String)o[11],(String)o[12]));
+			pojoLaporan.setListFoto(listFoto);
+		}
+		return pojoLaporan;
+	}
 
 }
