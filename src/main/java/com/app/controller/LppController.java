@@ -107,9 +107,9 @@ public class LppController {
 		}
 	}
 
-	@PostMapping(value = "/progress-lpp/details/upload-foto/{id}")
+	@PostMapping(value = "/progress-lpp/details/upload-foto")
 	@Transactional
-	public ResponseEntity<?> uploadFotoLaporan(@PathVariable("id") String id, MultipartFile depan,
+	public ResponseEntity<?> uploadFotoLaporan(@RequestParam String id, MultipartFile depan,
 			MultipartFile samping, MultipartFile dalam, MultipartFile belakang) throws Exception {
 		try {
 			lppService.uploadFotoLaporan(id, depan, samping, dalam, belakang);
@@ -119,9 +119,9 @@ public class LppController {
 		}
 	}
 
-	@PostMapping(value = "/progress-lpp/details/done/{id}")
+	@PostMapping(value = "/progress-lpp/details/done")
 	@Transactional
-	public ResponseEntity<?> updateLaporanIsDone(@PathVariable("id") String id) throws Exception {
+	public ResponseEntity<?> updateLaporanIsDone(@RequestParam String id) throws Exception {
 		try {
 			lppService.updateLaporanIsDone(id);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
