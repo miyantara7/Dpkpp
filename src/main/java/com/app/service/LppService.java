@@ -99,6 +99,7 @@ public class LppService extends BaseService {
 				personLpp.setLpp(lpp);
 				personLpp.setPerson(person);
 				personLpp.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+				System.out.println("lpp startdate "+lpp.getStartDate());
 				personLpp.setStartDate(lpp.getStartDate());
 				personLppService.add(personLpp);
 				
@@ -162,10 +163,11 @@ public class LppService extends BaseService {
 	
 	public void uploadFotoLaporan(String id,MultipartFile depan,MultipartFile samping,
 			MultipartFile dalam,MultipartFile belakang) throws Exception{
-		Laporan laporan = laporanService.getById(id);
+	try {
+Laporan laporan = laporanService.getById(id);
 		
 		if(depan != null) {
-			if (laporan.getFileNameDepan().equals("") || laporan.getFileNameDepan() == null) {
+			if (laporan.getFileNameDepan() == null || laporan.getFileNameDepan() == null) {
 				System.out.println("masuk");
 				fileService.add(path_foto_depan, laporan, depan);	
 			}else {
@@ -176,7 +178,7 @@ public class LppService extends BaseService {
 		}
 		
 		if(samping != null) {
-			if (laporan.getFileNameSamping().equals("") || laporan.getFileNameSamping() == null) {
+			if (laporan.getFileNameSamping() == null || laporan.getFileNameSamping() == null) {
 				fileService.add(path_foto_samping, laporan, samping);
 			}else {
 				fileService.edit(path_foto_samping, laporan, samping);
@@ -186,7 +188,7 @@ public class LppService extends BaseService {
 		}
 		
 		if(dalam != null) {
-			if (laporan.getFileNameDalam().equals("") || laporan.getFileNameDalam() == null) {
+			if (laporan.getFileNameDalam() == null || laporan.getFileNameDalam() == null) {
 				fileService.add(path_foto_dalam, laporan, dalam);
 			}else {
 				fileService.edit(path_foto_dalam, laporan, dalam);
@@ -196,7 +198,7 @@ public class LppService extends BaseService {
 		}
 		
 		if(belakang != null) {
-			if (laporan.getFileNameBelakang().equals("") || laporan.getFileNameBelakang() == null) {
+			if (laporan.getFileNameBelakang() == null || laporan.getFileNameBelakang() == null) {
 				fileService.add(path_foto_belakang, laporan, belakang);
 			}else {
 				fileService.edit(path_foto_belakang, laporan, belakang);
@@ -207,6 +209,12 @@ public class LppService extends BaseService {
 		
 		laporan.setUploadDate(new Timestamp(System.currentTimeMillis()));
 		laporanService.update(laporan);
+
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw e;
+		// TODO: handle exception
+	}	
 	}	
 	
 	public void updateLaporanIsDone(String id) throws Exception{
