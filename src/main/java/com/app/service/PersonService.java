@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.app.dao.PersonDao;
 import com.app.helper.SessionHelper;
+import com.app.model.Laporan;
+import com.app.model.Lpp;
 import com.app.model.Person;
 import com.app.pojo.PojoPagination;
 
@@ -39,6 +41,21 @@ public class PersonService extends BaseService {
 
 	@Value("${photo.not.found}")
 	private String photoNotFound;
+	
+	public Person getById(String id) throws Exception{
+		Person person = personDao.getById(id);
+		if(person != null) {
+			return person;
+		}else {
+			throw new Exception("Person not exist !");
+		}
+	}
+	
+	public void valIdExist(Person person) throws Exception{
+		if(personDao.getById(person.getId()) == null){
+			throw new Exception("Person not exist !");
+		}
+	}
 
 	public void save(Person person) throws Exception {
 		try {

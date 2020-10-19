@@ -3,6 +3,7 @@ package com.app.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +34,7 @@ import com.app.pojo.PojoPagination;
 import com.app.pojo.PojoProgressLpp;
 
 @Service
+@Transactional
 public class LppService extends BaseService {
 
 	@Autowired
@@ -63,6 +67,9 @@ public class LppService extends BaseService {
 	@Autowired
 	private LaporanService laporanService;
 	
+	@Autowired
+	private PersonService personService;
+	
 	public Lpp getById(String id) throws Exception{
 		Lpp lpp = lppDao.getById(id);
 		if(lpp != null) {
@@ -72,6 +79,7 @@ public class LppService extends BaseService {
 		}
 	}
 	
+	@Transactional
 	public void add(MultipartFile file,String pojoLpps) throws Exception{	
 		try {
 			PojoLpp pojoLpp = new PojoLpp();
@@ -86,15 +94,16 @@ public class LppService extends BaseService {
 			fileService.addFileReport(file, lpp);
 			addDetail(pojoLpp);
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw e;
 		}
 	}
 	
+	@Transactional
 	public void addDetail(PojoLpp pojoLpp) throws Exception{
 		Lpp lpp = pojoLpp.getLpp();
 		if(pojoLpp.getListPerson()!=null ||!pojoLpp.getListPerson().isEmpty()) {
 			for (Person person : pojoLpp.getListPerson()) {
+				personService.valIdExist(person);
 				PersonLpp personLpp = new PersonLpp();
 				personLpp.setLpp(lpp);
 				personLpp.setPerson(person);
@@ -156,10 +165,39 @@ public class LppService extends BaseService {
 		return pojoLaporan;
 	}
 	
-	public void addVerification(String id) throws Exception{
-		
+	public void verificationPersonLpp(String id) throws Exception{
+		try {
+			List<Object[]> result = laporanService.getStatusLaporanByPersonLppId(id);
+			for (Object[] o : result) {
+
+				if ((Boolean) o[2] == false) {
+					throw new Exception(((BigDecimal) o[1]).toString() + " % Progress has not been verified !");
+				}
+
+				PersonLpp personLpp = personLppService.getById(id);
+				personLpp.setVerificationDate(new Timestamp(System.currentTimeMillis()));
+				personLpp.setStatus(true);
+				personLppService.update(personLpp);
+			}
+		} catch (Exception e) {
+			throw e;
+		}
 	}
 	
+	public void verificationProgress(String id) throws Exception{
+		try {
+			Laporan laporan = laporanService.getById(id);
+			if (laporan != null) {
+				laporan.setVerificationDate(new Timestamp(System.currentTimeMillis()));
+				laporan.setStatus(true);
+				laporanService.update(laporan);
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	@Transactional
 	public void uploadFotoLaporan(String id,MultipartFile depan,MultipartFile samping,
 			MultipartFile dalam,MultipartFile belakang) throws Exception{
 		Laporan laporan = laporanService.getById(id);
@@ -208,11 +246,11 @@ public class LppService extends BaseService {
 		laporan.setUploadDate(new Timestamp(System.currentTimeMillis()));
 		laporanService.update(laporan);
 	}	
-	
+	@Transactional
 	public void updateLaporanIsDone(String id) throws Exception{
 		PersonLpp personLpp = personLppService.getById(id);
 		personLpp.setEndDate(new Timestamp(System.currentTimeMillis()));
-		personLppService.update(personLpp);
+		personLppService.updatePersonLpp(personLpp);
 	}
 	
 }
