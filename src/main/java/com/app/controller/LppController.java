@@ -79,6 +79,15 @@ public class LppController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@RequestMapping(path = "admin",params = {"page","limit"})
+	public ResponseEntity<?> getListLppAdmin(int page,int limit) throws Exception {
+		try {
+			return new ResponseEntity<>(lppService.getLppbyAdmin(page, limit), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	@GetMapping(value = "/details/{id}")
 	public ResponseEntity<?> getListLppByPersonId(@PathVariable("id") String id) throws Exception {
