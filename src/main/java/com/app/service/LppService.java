@@ -246,7 +246,7 @@ public class LppService extends BaseService {
 
 	@Transactional
 	public void uploadFotoLaporan(String id, MultipartFile depan, MultipartFile samping, MultipartFile dalam,
-			MultipartFile belakang) throws Exception {
+			MultipartFile belakang,String desc) throws Exception {
 		try {
 			Laporan laporan = laporanService.getById(id);
 
@@ -290,7 +290,7 @@ public class LppService extends BaseService {
 				laporan.setFileNameBelakang(belakang.getOriginalFilename());
 				laporan.setTypeFileBelakang(belakang.getContentType());
 			}
-
+			laporan.setDesc(desc);
 			laporan.setUploadDate(new Timestamp(System.currentTimeMillis()));
 			laporanService.update(laporan);
 
