@@ -53,7 +53,7 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 	
 	public String getQueryGetLppAdminDetail() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select tl.id,tl.code,tl.\"name\" as na,tl.description,p.\"name\" ,tp.start_date ,tp.verification_date ,tp.end_date ,tp.status from tb_lpp tl\r\n" + 
+		sb.append("select tp.id,tl.code,tl.\"name\" as na,tl.description,p.\"name\" ,tp.start_date ,tp.verification_date ,tp.end_date ,tp.status from tb_lpp tl\r\n" + 
 				"join tb_person_lpp tp on tp.lpp_id = tl.id \r\n" + 
 				"join tb_person p on p.id = tp.person_id \r\n" + 
 				"where tl.id =:id");
@@ -136,12 +136,31 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<Object[]> getDetailLppPersonbyAdmin(String id){
+		List<Object[]> og = new ArrayList<Object[]>();
+		StringBuilder sb = new StringBuilder();
+		sb.append("select tl.id as tt_id,tl.code,tl.\"name\" as ts_name,\r\n" + 
+				"tl.description as tp_des,p.\"name\" ,tp.start_date ,\r\n" + 
+				"tp.verification_date ,tp.end_date ,tp.status,\r\n" + 
+				"la.upload_date as pg_up,la.verification_date as pg_ver,la.status as la_status ,pro.description,la.id \r\n" + 
+				"from tb_lpp tl\r\n" + 
+				"join tb_person_lpp tp on tp.lpp_id = tl.id \r\n" + 
+				"join tb_person p on p.id = tp.person_id\r\n" + 
+				"join tb_laporan la on la.person_lpp_id = tp.id\r\n" + 
+				"join tb_progressing pro on pro.id = la.progress_id \r\n" + 
+				"where tp.id =:id\r\n" + 
+				"order by pro.code");
+		og = em.createNativeQuery(sb.toString()).setParameter("id", id).getResultList();
+		return og;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public PojoProgressLpp getProgressLppById(String id) throws Exception{
 		List<Object[]> results = em.createNativeQuery(bBuilder("select tpl.id , tp.\"name\" ,\r\n"
 				+ "(case when tpl.start_date\\:\\:text is null then '-' else tpl.start_date\\:\\:text end) ,\r\n"
 				+ "(case when tpl.end_date\\:\\:text is null then '-' else tpl.end_date\\:\\:text end),\r\n"
 				+ "(case when tpl.verification_date\\:\\:text is null then '-' else tpl.verification_date\\:\\:text end),\r\n"
-				+ "tl2.id as progressId,tp2.progress,tl2.status\r\n"
+				+ "tl2.id as progressId,tp2.progress,tl2.status,tl.name as name_tl\r\n"
 				+ "from \r\n"
 				+ "tb_lpp tl\r\n"
 				+ "join tb_person_lpp tpl on tl.id = tpl.lpp_id \r\n"
@@ -159,6 +178,7 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 			progressLpp.setName((String)o[1]);
 			progressLpp.setStartDate((String)o[2]);
 			progressLpp.setEndDate((String)o[3]);
+			progressLpp.setLaporan((String)o[8]);
 			progressLpp.setVerificationDate((String)o[4]);
 			LinkedHashMap<String, Object> progress = new LinkedHashMap<>();
 			progress.put("id", (String)o[5]);

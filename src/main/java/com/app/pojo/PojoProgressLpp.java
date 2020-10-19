@@ -7,10 +7,18 @@ public class PojoProgressLpp {
 
 	private String id;
 	private String name;
+	private String laporan;
 	private String startDate;
 	private String endDate;
 	private String verificationDate;
 	private List<Object> listProgress;
+	
+	public String getLaporan() {
+		return laporan;
+	}
+	public void setLaporan(String laporan) {
+		this.laporan = laporan;
+	}
 	public String getId() {
 		return id;
 	}

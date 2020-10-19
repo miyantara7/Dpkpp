@@ -32,6 +32,7 @@ import com.app.model.Progressing;
 import com.app.pojo.PojoDetailLppAdmin;
 import com.app.pojo.PojoLaporan;
 import com.app.pojo.PojoLpp;
+import com.app.pojo.PojoLppPersonDetailAdmin;
 import com.app.pojo.PojoPagination;
 import com.app.pojo.PojoProgressLpp;
 
@@ -222,10 +223,12 @@ public class LppService extends BaseService {
 		PojoDetailLppAdmin pj = new PojoDetailLppAdmin();
 		List<Object> ps = new ArrayList<Object>();
 		for (Object[] o : lppDao.getDetailLppAdmin(id)) {
+			pj.setId((String)o[0]);
 			pj.setCode((String) o[1]);
 			pj.setName((String) o[2]);
 			pj.setDescription((String) o[3]);
 			HashMap<String, Object> data = new HashMap<String, Object>();
+			data.put("id", o[0]);
 			data.put("name", o[4]);
 			data.put("startDate", o[5]);
 			data.put("verikasiDate", o[6]);
@@ -295,12 +298,42 @@ public class LppService extends BaseService {
 			// TODO: handle exception
 		}
 	}
+	
+	
 
 	@Transactional
 	public void updateLaporanIsDone(String id) throws Exception {
 		PersonLpp personLpp = personLppService.getById(id);
 		personLpp.setEndDate(new Timestamp(System.currentTimeMillis()));
 		personLppService.updatePersonLpp(personLpp);
+	}
+	
+	
+	
+	public PojoLppPersonDetailAdmin getPersonLppDetailAdmin(String id) {
+		PojoLppPersonDetailAdmin pj = new PojoLppPersonDetailAdmin();
+		List<Object> ps = new ArrayList<Object>();
+		for (Object[] o : lppDao.getDetailLppPersonbyAdmin(id)) {
+			pj.setPetugas((String)o[4]);
+			pj.setStartDate((Date)o[5]);
+			pj.setVerikasiDate((Date)o[6]);
+			pj.setEndDate((Date)o[7]);
+			pj.setProjek((String)o[2]);
+			pj.setDescription((String)o[3]);
+			pj.setStatus((Boolean)o[8]);
+			HashMap<String, Object> data = new HashMap<String, Object>();
+			data.put("id", o[13]);
+			data.put("uploadDate", o[9]);
+			data.put("verikasiDate", o[10]);
+			data.put("status", o[11]);
+			data.put("proggress", o[12]);
+
+			ps.add(data);
+
+		}
+		
+		pj.setListProggres(ps);	
+		return pj;
 	}
 
 }
