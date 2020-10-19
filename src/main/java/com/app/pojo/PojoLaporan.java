@@ -9,7 +9,36 @@ public class PojoLaporan {
 	private String uploadDate;
 	private String verificationDate;
 	private String dec;
-	private List<Object> listFoto;
+	public Object fotoDepan;
+	public Object fotoSamping;
+	public Object fotoBelakang;
+	public Object fotoDalam;
+	
+	
+	public Object getFotoDepan() {
+		return fotoDepan;
+	}
+	public void setFotoDepan(Object fotoDepan) {
+		this.fotoDepan = fotoDepan;
+	}
+	public Object getFotoSamping() {
+		return fotoSamping;
+	}
+	public void setFotoSamping(Object fotoSamping) {
+		this.fotoSamping = fotoSamping;
+	}
+	public Object getFotoBelakang() {
+		return fotoBelakang;
+	}
+	public void setFotoBelakang(Object fotoBelakang) {
+		this.fotoBelakang = fotoBelakang;
+	}
+	public Object getFotoDalam() {
+		return fotoDalam;
+	}
+	public void setFotoDalam(Object fotoDalam) {
+		this.fotoDalam = fotoDalam;
+	}
 	public String getId() {
 		return id;
 	}
@@ -39,11 +68,5 @@ public class PojoLaporan {
 	}
 	public void setDec(String dec) {
 		this.dec = dec;
-	}
-	public List<Object> getListFoto() {
-		return listFoto;
-	}
-	public void setListFoto(List<Object> listFoto) {
-		this.listFoto = listFoto;
 	}
 }
