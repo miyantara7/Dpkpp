@@ -37,6 +37,17 @@ public class LppController {
 		}
 	}
 	
+	@RequestMapping(path = "/admin",params = {"page","limit"})
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public ResponseEntity<?> getListLppByAdmin(int page,int limit) throws Exception {
+		try {			
+			return new ResponseEntity<>(lppService.getLppbyAdmin(page,limit), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	
 //	@PostMapping
 //	@Transactional
 //	@PreAuthorize("hasAuthority('ROLE_VERIFICATOR')")
@@ -53,6 +64,15 @@ public class LppController {
 	public ResponseEntity<?> getListLppByPersonId() throws Exception {
 		try {			
 			return new ResponseEntity<>(lppService.getLppByPersonId(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping(value = "/admin/{id}")
+	public ResponseEntity<?> getListLppAdminDetail(@PathVariable("id") String id) throws Exception {
+		try {			
+			return new ResponseEntity<>(lppService.getAdminDetail(id), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}

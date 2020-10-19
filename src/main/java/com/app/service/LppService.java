@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import com.app.model.Lpp;
 import com.app.model.Person;
 import com.app.model.PersonLpp;
 import com.app.model.Progressing;
+import com.app.pojo.PojoDetailLppAdmin;
 import com.app.pojo.PojoLaporan;
 import com.app.pojo.PojoLpp;
 import com.app.pojo.PojoPagination;
@@ -70,6 +72,34 @@ public class LppService extends BaseService {
 		}else {
 			throw new Exception("LPP not exist !");
 		}
+	}
+	
+	public PojoPagination getLppbyAdmin(int page,int limit) throws Exception{
+		PojoPagination pj = new PojoPagination();
+		pj.setData(lppDao.getLppAdmin(page,limit));
+		pj.setCount(lppDao.getCountLppByAdmin());
+		return pj;
+	}
+	
+	public PojoDetailLppAdmin getAdminDetail(String id) {
+		PojoDetailLppAdmin pj = new PojoDetailLppAdmin();
+		List<Object> ps = new ArrayList<Object>();
+		for(Object[] o:lppDao.getDetailLppAdmin(id)) {
+			pj.setCode((String)o[1]);
+			pj.setName((String)o[2]);
+			pj.setDescription((String)o[3]);
+			HashMap<String, Object> data = new HashMap<String, Object>();
+			data.put("name",o[4]);
+			data.put("startDate",o[5]);
+			data.put("verikasiDate",o[6]);
+			data.put("endDate",o[7]);
+			data.put("status",o[8]);
+
+			ps.add(data);
+			
+		}
+		pj.setListPerson(ps);
+		return pj;
 	}
 	
 	public void add(MultipartFile file,String pojoLpps) throws Exception{	

@@ -2,6 +2,7 @@ package com.app.dao;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -41,6 +42,41 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 		return !results.isEmpty() ? results.get(0) : null;
 	}
 	
+	public String getQueryGetLppAdmin() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select tl.id,tl.code,tl.name from tb_lpp tl");
+		
+		return sb.toString();
+		
+	}
+	
+	public String getQueryGetLppAdminDetail() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select tl.id,tl.code,tl.\"name\" as na,tl.description,p.\"name\" ,tp.start_date ,tp.verification_date ,tp.end_date ,tp.status from tb_lpp tl\r\n" + 
+				"join tb_person_lpp tp on tp.lpp_id = tl.id \r\n" + 
+				"join tb_person p on p.id = tp.person_id \r\n" + 
+				"where tl.id =:id");
+		
+		return sb.toString();
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object> getLppAdmin(int page,int limit){
+		List<Object> list = new ArrayList<Object>();
+		StringBuilder sb = new StringBuilder().append(getQueryGetLppAdmin());
+		List<Object[]> lt = em.createNativeQuery(sb.toString()).setFirstResult((page-1)*limit)
+				.setMaxResults(limit).getResultList();
+		for(Object[] o:lt) {
+			HashMap<String, Object> data = new HashMap<String, Object>();
+			data.put("id",o[0]);
+			data.put("code",o[1]);
+			data.put("name",o[2]);
+			list.add(data);
+		}
+		return list;
+		
+	}
 	public String getQueryLppByPersonId(String inquiry) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tpl.id as personLppId,tl.id as laporanId,tl.\"name\",tl.description,\r\n"
@@ -59,6 +95,19 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 		}
 
 		return sb.toString();
+	}
+	
+	public Integer getCountLppByAdmin() throws Exception {	
+		StringBuilder querySb = new StringBuilder();
+		querySb.append("select count(*) from (");
+		querySb.append(getQueryGetLppAdmin());
+		querySb.append(")");
+		querySb.append("as emp");
+		
+		BigInteger value = (BigInteger) em.createNativeQuery(querySb.toString())
+				.getSingleResult();
+		
+		return value.intValue();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -118,6 +167,14 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 			progressLpp.setListProgress(listProgress);
 		}
 		return progressLpp;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getDetailLppAdmin(String id){
+		StringBuilder sb = new StringBuilder(getQueryGetLppAdminDetail());
+		List<Object[]> data = em.createNativeQuery(sb.toString()).setParameter("id", id).getResultList();
+		
+		return data;
 	}
 	
 	@SuppressWarnings("unchecked")
