@@ -80,6 +80,16 @@ public class LppController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@GetMapping(value = "/get-all")
+	@PreAuthorize("hasAuthority('ROLE_VERIFICATOR')")
+	public ResponseEntity<?> getLppByVerificator() throws Exception {
+		try {
+			return new ResponseEntity<>(lppService.getLppByVerificator(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	@GetMapping(value = "/admin/{id}")
 	public ResponseEntity<?> getListLppAdminDetail(@PathVariable("id") String id) throws Exception {

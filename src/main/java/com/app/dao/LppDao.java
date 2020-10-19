@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.app.model.Lpp;
 import com.app.pojo.PojoLppPerson;
+import com.app.pojo.PojoLppPetugas;
 import com.app.pojo.PojoPersonLkh;
 import com.app.pojo.PojoProgressLpp;
 
@@ -195,5 +196,47 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 				.getResultList();
 
 		return results;
+	}
+	
+	
+	public String getQueryLppByVerificator(String inquiry) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select tpl.id as personLppId,tl.id as laporanId,tl.\"name\",tp.\"name\" as petugas,tl.description,\r\n"
+				+ "tpl.start_date,tpl.end_date,tpl.status \r\n"
+				+ "from \r\n"
+				+ "tb_lpp tl\r\n"
+				+ "join tb_person_lpp tpl on tl.id = tpl.lpp_id \r\n"
+				+ "join tb_person tp on tpl.person_id = tp.id ) as lpp ");
+		sb.append("WHERE 1=1 ");
+		
+		if (inquiry != null && !inquiry.isEmpty()) {
+			sb.append(" AND POSITION(LOWER('").append(inquiry).append("') in LOWER(CONCAT(")
+					.append("lpp.personLppId,lpp.laporanId,lpp.name,lpp.petugas,lpp.description,"
+							+ "lpp.start_date,lpp.end_date,lpp.status")
+					.append("))) > 0");
+		}
+
+		return sb.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<PojoLppPetugas> getLppByVerificator(String inquiry) throws Exception{
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT lpp.personLppId,lpp.laporanId,lpp.name,lpp.petugas,lpp.description,"
+				+"lpp.start_date,lpp.end_date,lpp.status "
+				+"From ( ");
+		List<Object[]> results = em.createNativeQuery(sb.toString() + getQueryLppByVerificator(inquiry))
+				.getResultList();
+		
+		return !results.isEmpty() ? bMapperList(results, PojoLppPetugas.class, "id","laporanId",
+				"nameLpp","petugas","desc","startDate","endDate","status") : null;
+	}
+	public Integer getCountLppByVerificator(String inquiry) throws Exception {	
+		String sql = bBuilder("Select count(*) FROM ( ");
+		
+		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryLppByVerificator(inquiry))
+				.getSingleResult();
+		
+		return value.intValue();
 	}
 }

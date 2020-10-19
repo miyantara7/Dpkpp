@@ -144,6 +144,13 @@ public class LppService extends BaseService {
 		pojoLkh.setCount(lppDao.getCountLppByPersonId(SessionHelper.getPerson().getId(), null));
 		return pojoLkh;
 	}
+	
+	public PojoPagination getLppByVerificator() throws Exception {
+		PojoPagination pojoLkh = new PojoPagination();
+		pojoLkh.setData(lppDao.getLppByVerificator(null));
+		pojoLkh.setCount(lppDao.getCountLppByVerificator(null));
+		return pojoLkh;
+	}
 
 	public PojoProgressLpp getProgressLppById(String id) throws Exception {
 		return lppDao.getProgressLppById(id);
