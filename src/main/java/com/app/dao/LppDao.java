@@ -204,7 +204,7 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 				+ "(case when tl2.upload_date\\:\\:date\\:\\:text is null then '-' else tl2.upload_date\\:\\:date\\:\\:text end),\r\n"
 				+ "(case when tl2.verification_date\\:\\:date\\:\\:text is null then '-' else tl2.verification_date\\:\\:date\\:\\:text end),\r\n"
 				+ "tl2.description,tl2.file_name_depan,tl2.type_file_depan,tl2.file_name_samping,tl2.type_file_samping,\r\n"
-				+ "tl2.file_name_dalam,tl2.type_file_dalam,tl2.file_name_belakang,tl2.type_file_belakang \r\n"
+				+ "tl2.file_name_dalam,tl2.type_file_dalam,tl2.file_name_belakang,tl2.type_file_belakang,tl.name as name_pro \r\n"
 				+ "from \r\n"
 				+ "tb_lpp tl\r\n"
 				+ "join tb_person_lpp tpl on tl.id = tpl.lpp_id \r\n"

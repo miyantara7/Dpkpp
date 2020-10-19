@@ -8,6 +8,15 @@ public class PojoLaporanAdmin {
 	private String uploadDate;
 	private String verificationDate;
 	private String dec;
+	private String proyek;
+	
+	
+	public String getProyek() {
+		return proyek;
+	}
+	public void setProyek(String proyek) {
+		this.proyek = proyek;
+	}
 	private List<Object> listFoto;
 	public String getId() {
 		return id;
