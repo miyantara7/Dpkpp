@@ -37,10 +37,10 @@ public class LppController {
 		}
 	}
 
-	@PostMapping(value = "/verification/personlpp")
+	@PostMapping(value = "/verification/personlpp/{id}")
 	@Transactional
 	@PreAuthorize("hasAuthority('ROLE_VERIFICATOR')")
-	public ResponseEntity<?> verificationPersonLpp(@RequestParam String id) throws Exception {
+	public ResponseEntity<?> verificationPersonLpp(@PathVariable("id") String id) throws Exception {
 		try {
 			lppService.verificationPersonLpp(id);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
@@ -50,10 +50,10 @@ public class LppController {
 		}
 	}
 
-	@PostMapping(value = "/verification/progress-laporan")
+	@PostMapping(value = "/verification/progress-laporan/{id}")
 	@Transactional
 	@PreAuthorize("hasAuthority('ROLE_VERIFICATOR')")
-	public ResponseEntity<?> verificationProgressPerson(@RequestParam String id) throws Exception {
+	public ResponseEntity<?> verificationProgressPerson(@PathVariable("id") String id) throws Exception {
 		try {
 			lppService.verificationProgress(id);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
@@ -66,6 +66,16 @@ public class LppController {
 	public ResponseEntity<?> getListLppByPersonId() throws Exception {
 		try {
 			return new ResponseEntity<>(lppService.getLppByPersonId(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping(value = "/get/{id}")
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public ResponseEntity<?> getListLppByPersonIdAdmin(@PathVariable("id") String id) throws Exception {
+		try {
+			return new ResponseEntity<>(lppService.getLppByPersonIdAdmin(id), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
