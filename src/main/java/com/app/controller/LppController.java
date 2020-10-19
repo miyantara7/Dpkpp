@@ -157,4 +157,13 @@ public class LppController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@GetMapping(value = "admin/progress-lpp/details/{id}")
+	public ResponseEntity<?> getDetailsLaporanAdmin(@PathVariable("id") String id) throws Exception {
+		try {
+			return new ResponseEntity<>(lppService.getDetailsLaporanByIdAdmin(id), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 }

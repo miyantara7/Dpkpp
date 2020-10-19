@@ -31,6 +31,7 @@ import com.app.model.PersonLpp;
 import com.app.model.Progressing;
 import com.app.pojo.PojoDetailLppAdmin;
 import com.app.pojo.PojoLaporan;
+import com.app.pojo.PojoLaporanAdmin;
 import com.app.pojo.PojoLpp;
 import com.app.pojo.PojoLppPersonDetailAdmin;
 import com.app.pojo.PojoPagination;
@@ -334,6 +335,33 @@ public class LppService extends BaseService {
 		
 		pj.setListProggres(ps);	
 		return pj;
+	}
+	
+	public PojoLaporanAdmin getDetailsLaporanByIdAdmin(String id) throws Exception{
+		List<Object[]> result = lppDao.getLaporanLppById(id);
+		PojoLaporanAdmin pojoLaporan = new PojoLaporanAdmin();
+		List<Object> listFoto = new ArrayList<Object>();
+		for (Object[] o : result) {
+			pojoLaporan.setId((String)o[0]);
+			pojoLaporan.setName((String)o[1]);
+			pojoLaporan.setUploadDate((String)o[2]);
+			pojoLaporan.setVerificationDate((String)o[3]);
+			pojoLaporan.setDec((String)o[4]);
+			LinkedHashMap<String, Object> fotoDepan = new LinkedHashMap<String, Object>();
+			fotoDepan.put("fotoDepan", fileService.getFotoLaporan(path_foto_depan, (String)o[0],(String)o[5],(String)o[6]));
+			LinkedHashMap<String, Object> fotoSamping = new LinkedHashMap<String, Object>();
+			fotoSamping.put("fotoSamping", fileService.getFotoLaporan(path_foto_samping, (String)o[0],(String)o[7],(String)o[8]));
+			LinkedHashMap<String, Object> fotoDalam = new LinkedHashMap<String, Object>();
+			fotoDalam.put("fotoDalam", fileService.getFotoLaporan(path_foto_dalam, (String)o[0],(String)o[9],(String)o[10]));
+			LinkedHashMap<String, Object> fotoBelakang = new LinkedHashMap<String, Object>();
+			fotoBelakang.put("fotoBelakang", fileService.getFotoLaporan(path_foto_belakang, (String)o[0],(String)o[11],(String)o[12]));
+			listFoto.add(fotoDepan);
+			listFoto.add(fotoSamping);
+			listFoto.add(fotoDalam);
+			listFoto.add(fotoBelakang);
+			pojoLaporan.setListFoto(listFoto);
+		}
+		return pojoLaporan;
 	}
 
 }
