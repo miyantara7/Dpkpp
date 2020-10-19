@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,8 +71,8 @@ public class LppController {
 		}
 	}
 	
-	@GetMapping(value = "/details")
-	public ResponseEntity<?> getListLppByPersonId(@RequestParam String id) throws Exception {
+	@GetMapping(value = "/details/{id}")
+	public ResponseEntity<?> getListLppByPersonId(@PathVariable("id") String id) throws Exception {
 		try {			
 			return new ResponseEntity<>(lppService.getProgressLppById(id), HttpStatus.OK);
 		} catch (Exception e) {
@@ -79,8 +80,8 @@ public class LppController {
 		}
 	}
 	
-	@GetMapping(value = "/progress-lpp/details")
-	public ResponseEntity<?> getDetailsLaporanById(@RequestParam String id) throws Exception {
+	@GetMapping(value = "/progress-lpp/details/{id}")
+	public ResponseEntity<?> getDetailsLaporanById(@PathVariable("id") String id) throws Exception {
 		try {			
 			return new ResponseEntity<>(lppService.getDetailsLaporanById(id), HttpStatus.OK);
 		} catch (Exception e) {
@@ -88,9 +89,9 @@ public class LppController {
 		}
 	}
 	
-	@PostMapping(value = "/progress-lpp/details/upload-foto")
+	@PostMapping(value = "/progress-lpp/details/upload-foto/{id}")
 	@Transactional
-	public ResponseEntity<?> uploadFotoLaporan(@RequestParam String id,MultipartFile depan,MultipartFile samping,
+	public ResponseEntity<?> uploadFotoLaporan(@PathVariable("id") String id,MultipartFile depan,MultipartFile samping,
 			MultipartFile dalam,MultipartFile belakang) throws Exception {
 		try {
 			lppService.uploadFotoLaporan(id,depan,samping,dalam,belakang);
@@ -100,9 +101,9 @@ public class LppController {
 		}
 	}
 	
-	@PostMapping(value = "/progress-lpp/details/done")
+	@PostMapping(value = "/progress-lpp/details/done/{id}")
 	@Transactional
-	public ResponseEntity<?> updateLaporanIsDone(@RequestParam String id) throws Exception {
+	public ResponseEntity<?> updateLaporanIsDone(@PathVariable("id") String id) throws Exception {
 		try {
 			lppService.updateLaporanIsDone(id);
 			return new ResponseEntity<>("Success", HttpStatus.OK);

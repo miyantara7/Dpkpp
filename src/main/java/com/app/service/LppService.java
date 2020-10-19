@@ -108,6 +108,7 @@ public class LppService extends BaseService {
 				personLpp.setLpp(lpp);
 				personLpp.setPerson(person);
 				personLpp.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+				System.out.println("lpp startdate "+lpp.getStartDate());
 				personLpp.setStartDate(lpp.getStartDate());
 				personLppService.add(personLpp);
 				
@@ -148,19 +149,11 @@ public class LppService extends BaseService {
 			pojoLaporan.setUploadDate((String)o[2]);
 			pojoLaporan.setVerificationDate((String)o[3]);
 			pojoLaporan.setDec((String)o[4]);
-			LinkedHashMap<String, Object> fotoDepan = new LinkedHashMap<String, Object>();
-			fotoDepan.put("fotoDepan", fileService.getFotoLaporan(path_foto_depan, (String)o[0],(String)o[5],(String)o[6]));
-			LinkedHashMap<String, Object> fotoSamping = new LinkedHashMap<String, Object>();
-			fotoSamping.put("fotoSamping", fileService.getFotoLaporan(path_foto_samping, (String)o[0],(String)o[7],(String)o[8]));
-			LinkedHashMap<String, Object> fotoDalam = new LinkedHashMap<String, Object>();
-			fotoDalam.put("fotoDalam", fileService.getFotoLaporan(path_foto_dalam, (String)o[0],(String)o[9],(String)o[10]));
-			LinkedHashMap<String, Object> fotoBelakang = new LinkedHashMap<String, Object>();
-			fotoBelakang.put("fotoBelakang", fileService.getFotoLaporan(path_foto_belakang, (String)o[0],(String)o[11],(String)o[12]));
-			listFoto.add(fotoDepan);
-			listFoto.add(fotoSamping);
-			listFoto.add(fotoDalam);
-			listFoto.add(fotoBelakang);
-			pojoLaporan.setListFoto(listFoto);
+			pojoLaporan.setFotoDepan(fileService.getFotoLaporan(path_foto_depan, (String)o[0],(String)o[5],(String)o[6]));
+			pojoLaporan.setFotoBelakang(fileService.getFotoLaporan(path_foto_belakang, (String)o[0],(String)o[11],(String)o[12]));
+			pojoLaporan.setFotoSamping(fileService.getFotoLaporan(path_foto_samping, (String)o[0],(String)o[7],(String)o[8]));
+			pojoLaporan.setFotoDalam(fileService.getFotoLaporan(path_foto_dalam, (String)o[0],(String)o[9],(String)o[10]));
+			
 		}
 		return pojoLaporan;
 	}
@@ -200,10 +193,11 @@ public class LppService extends BaseService {
 	@Transactional
 	public void uploadFotoLaporan(String id,MultipartFile depan,MultipartFile samping,
 			MultipartFile dalam,MultipartFile belakang) throws Exception{
-		Laporan laporan = laporanService.getById(id);
+	try {
+Laporan laporan = laporanService.getById(id);
 		
 		if(depan != null) {
-			if (laporan.getFileNameDepan().equals("") || laporan.getFileNameDepan() == null) {
+			if (laporan.getFileNameDepan() == null || laporan.getFileNameDepan() == null) {
 				System.out.println("masuk");
 				fileService.add(path_foto_depan, laporan, depan);	
 			}else {
@@ -214,7 +208,7 @@ public class LppService extends BaseService {
 		}
 		
 		if(samping != null) {
-			if (laporan.getFileNameSamping().equals("") || laporan.getFileNameSamping() == null) {
+			if (laporan.getFileNameSamping() == null || laporan.getFileNameSamping() == null) {
 				fileService.add(path_foto_samping, laporan, samping);
 			}else {
 				fileService.edit(path_foto_samping, laporan, samping);
@@ -224,7 +218,7 @@ public class LppService extends BaseService {
 		}
 		
 		if(dalam != null) {
-			if (laporan.getFileNameDalam().equals("") || laporan.getFileNameDalam() == null) {
+			if (laporan.getFileNameDalam() == null || laporan.getFileNameDalam() == null) {
 				fileService.add(path_foto_dalam, laporan, dalam);
 			}else {
 				fileService.edit(path_foto_dalam, laporan, dalam);
@@ -234,7 +228,7 @@ public class LppService extends BaseService {
 		}
 		
 		if(belakang != null) {
-			if (laporan.getFileNameBelakang().equals("") || laporan.getFileNameBelakang() == null) {
+			if (laporan.getFileNameBelakang() == null || laporan.getFileNameBelakang() == null) {
 				fileService.add(path_foto_belakang, laporan, belakang);
 			}else {
 				fileService.edit(path_foto_belakang, laporan, belakang);
@@ -245,6 +239,12 @@ public class LppService extends BaseService {
 		
 		laporan.setUploadDate(new Timestamp(System.currentTimeMillis()));
 		laporanService.update(laporan);
+
+	} catch (Exception e) {
+		e.printStackTrace();
+		throw e;
+		// TODO: handle exception
+	}	
 	}	
 	@Transactional
 	public void updateLaporanIsDone(String id) throws Exception{

@@ -38,7 +38,6 @@ public class Lpp extends BaseModel {
 	@JoinColumn(name = "person_id")
 	private Person person;
 	@Transient
-	@JsonIgnore
 	private Date startDate;
 	public String getTypeFile() {
 		return typeFile;
@@ -112,4 +111,5 @@ public class Lpp extends BaseModel {
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
+	
 }
