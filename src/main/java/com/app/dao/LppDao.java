@@ -202,7 +202,7 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 	public String getQueryLppByVerificator(String inquiry) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tpl.id as personLppId,tl.id as laporanId,tl.\"name\",tp.\"name\" as petugas,tl.description,\r\n"
-				+ "tpl.start_date,tpl.end_date,tpl.status \r\n"
+				+ "tpl.start_date\\:\\:text,tpl.end_date\\:\\:text,tpl.status \r\n"
 				+ "from \r\n"
 				+ "tb_lpp tl\r\n"
 				+ "join tb_person_lpp tpl on tl.id = tpl.lpp_id \r\n"
