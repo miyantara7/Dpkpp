@@ -24,90 +24,92 @@ public class LppController {
 
 	@Autowired
 	private LppService lppService;
-	
+
 	@PostMapping
 	@Transactional
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<?> add(MultipartFile file,String lpp) throws Exception {
+	public ResponseEntity<?> add(MultipartFile file, String lpp) throws Exception {
 		try {
-			lppService.add(file,lpp);
+			lppService.add(file, lpp);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	@RequestMapping(path = "/admin",params = {"page","limit"})
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<?> getListLppByAdmin(int page,int limit) throws Exception {
-		try {			
-			return new ResponseEntity<>(lppService.getLppbyAdmin(page,limit), HttpStatus.OK);
+
+	@PostMapping(value = "/verification/personlpp")
+	@Transactional
+	@PreAuthorize("hasAuthority('ROLE_VERIFICATOR')")
+	public ResponseEntity<?> verificationPersonLpp(@RequestParam String id) throws Exception {
+		try {
+			lppService.verificationPersonLpp(id);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	@PostMapping(value = "/verification/progress-laporan")
+	@Transactional
+	@PreAuthorize("hasAuthority('ROLE_VERIFICATOR')")
+	public ResponseEntity<?> verificationProgressPerson(@RequestParam String id) throws Exception {
+		try {
+			lppService.verificationProgress(id);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
-	
-//	@PostMapping
-//	@Transactional
-//	@PreAuthorize("hasAuthority('ROLE_VERIFICATOR')")
-//	public ResponseEntity<?> addVerification(@RequestParam String id) throws Exception {
-//		try {
-//			lppService.addVerification(id);
-//			return new ResponseEntity<>("Success", HttpStatus.OK);
-//		} catch (Exception e) {
-//			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//		}
-//	}
-	
+
 	@GetMapping(value = "/get")
 	public ResponseEntity<?> getListLppByPersonId() throws Exception {
-		try {			
+		try {
 			return new ResponseEntity<>(lppService.getLppByPersonId(), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping(value = "/admin/{id}")
 	public ResponseEntity<?> getListLppAdminDetail(@PathVariable("id") String id) throws Exception {
-		try {			
+		try {
 			return new ResponseEntity<>(lppService.getAdminDetail(id), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping(value = "/details/{id}")
 	public ResponseEntity<?> getListLppByPersonId(@PathVariable("id") String id) throws Exception {
-		try {			
+		try {
 			return new ResponseEntity<>(lppService.getProgressLppById(id), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping(value = "/progress-lpp/details/{id}")
 	public ResponseEntity<?> getDetailsLaporanById(@PathVariable("id") String id) throws Exception {
-		try {			
+		try {
 			return new ResponseEntity<>(lppService.getDetailsLaporanById(id), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping(value = "/progress-lpp/details/upload-foto/{id}")
 	@Transactional
-	public ResponseEntity<?> uploadFotoLaporan(@PathVariable("id") String id,MultipartFile depan,MultipartFile samping,
-			MultipartFile dalam,MultipartFile belakang) throws Exception {
+	public ResponseEntity<?> uploadFotoLaporan(@PathVariable("id") String id, MultipartFile depan,
+			MultipartFile samping, MultipartFile dalam, MultipartFile belakang) throws Exception {
 		try {
-			lppService.uploadFotoLaporan(id,depan,samping,dalam,belakang);
+			lppService.uploadFotoLaporan(id, depan, samping, dalam, belakang);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@PostMapping(value = "/progress-lpp/details/done/{id}")
 	@Transactional
 	public ResponseEntity<?> updateLaporanIsDone(@PathVariable("id") String id) throws Exception {

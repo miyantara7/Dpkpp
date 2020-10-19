@@ -37,4 +37,17 @@ public class LaporanDao extends BaseDao implements BaseMasterDao {
 		return !results.isEmpty() ? results.get(0) : null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getStatusLaporanByPersonLppId(String id) throws Exception{
+		List<Object[]> results = em.createNativeQuery("select tl.id,\r\n"
+				+ "tp.progress\\:\\:numeric as prog,tl.status from \r\n"
+				+ "tb_person_lpp tpl \r\n"
+				+ "join tb_laporan tl on tpl.id = tl.person_lpp_id \r\n"
+				+ "join tb_progressing tp on tl.progress_id = tp.id\r\n"
+				+ "where tpl.id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return results;
+	}
 }

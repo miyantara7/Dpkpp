@@ -1,6 +1,7 @@
 package com.app.service;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,5 +46,9 @@ public class LaporanService {
 		} catch (IOException e) {
 			throw e;
 		}
+	}
+	
+	public List<Object[]> getStatusLaporanByPersonLppId(String id) throws Exception{
+		return laporanDao.getStatusLaporanByPersonLppId(id);
 	}
 }

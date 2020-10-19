@@ -3,6 +3,7 @@ package com.app.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -13,6 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,76 +36,53 @@ import com.app.pojo.PojoPagination;
 import com.app.pojo.PojoProgressLpp;
 
 @Service
+@Transactional
 public class LppService extends BaseService {
 
 	@Autowired
 	private LppDao lppDao;
-	
+
 	@Autowired
 	private FileService fileService;
-	
+
 	@Value("${path.report.file}")
-    private String path_file;
-	
+	private String path_file;
+
 	@Value("${path.report.photo.depan}")
-    private String path_foto_depan;
-	
+	private String path_foto_depan;
+
 	@Value("${path.report.photo.samping}")
-    private String path_foto_samping;
-	
+	private String path_foto_samping;
+
 	@Value("${path.report.photo.dalam}")
-    private String path_foto_dalam;
-	
+	private String path_foto_dalam;
+
 	@Value("${path.report.photo.belakang}")
-    private String path_foto_belakang;
-	
+	private String path_foto_belakang;
+
 	@Autowired
 	private PersonLppService personLppService;
-	
+
 	@Autowired
 	private ProgressingService progressingService;
-	
+
 	@Autowired
 	private LaporanService laporanService;
-	
-	public Lpp getById(String id) throws Exception{
+
+	@Autowired
+	private PersonService personService;
+
+	public Lpp getById(String id) throws Exception {
 		Lpp lpp = lppDao.getById(id);
-		if(lpp != null) {
+		if (lpp != null) {
 			return lpp;
-		}else {
+		} else {
 			throw new Exception("LPP not exist !");
 		}
 	}
-	
-	public PojoPagination getLppbyAdmin(int page,int limit) throws Exception{
-		PojoPagination pj = new PojoPagination();
-		pj.setData(lppDao.getLppAdmin(page,limit));
-		pj.setCount(lppDao.getCountLppByAdmin());
-		return pj;
-	}
-	
-	public PojoDetailLppAdmin getAdminDetail(String id) {
-		PojoDetailLppAdmin pj = new PojoDetailLppAdmin();
-		List<Object> ps = new ArrayList<Object>();
-		for(Object[] o:lppDao.getDetailLppAdmin(id)) {
-			pj.setCode((String)o[1]);
-			pj.setName((String)o[2]);
-			pj.setDescription((String)o[3]);
-			HashMap<String, Object> data = new HashMap<String, Object>();
-			data.put("name",o[4]);
-			data.put("startDate",o[5]);
-			data.put("verikasiDate",o[6]);
-			data.put("endDate",o[7]);
-			data.put("status",o[8]);
 
-			ps.add(data);
-			
-		}
-		pj.setListPerson(ps);
-		return pj;
-	}
-	
-	public void add(MultipartFile file,String pojoLpps) throws Exception{	
+	@Transactional
+	public void add(MultipartFile file, String pojoLpps) throws Exception {
 		try {
 			PojoLpp pojoLpp = new PojoLpp();
 			pojoLpp = super.readValue(pojoLpps, PojoLpp.class);
@@ -116,23 +96,24 @@ public class LppService extends BaseService {
 			fileService.addFileReport(file, lpp);
 			addDetail(pojoLpp);
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw e;
 		}
 	}
-	
-	public void addDetail(PojoLpp pojoLpp) throws Exception{
+
+	@Transactional
+	public void addDetail(PojoLpp pojoLpp) throws Exception {
 		Lpp lpp = pojoLpp.getLpp();
-		if(pojoLpp.getListPerson()!=null ||!pojoLpp.getListPerson().isEmpty()) {
+		if (pojoLpp.getListPerson() != null || !pojoLpp.getListPerson().isEmpty()) {
 			for (Person person : pojoLpp.getListPerson()) {
+				personService.valIdExist(person);
 				PersonLpp personLpp = new PersonLpp();
 				personLpp.setLpp(lpp);
 				personLpp.setPerson(person);
 				personLpp.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-				System.out.println("lpp startdate "+lpp.getStartDate());
+				System.out.println("lpp startdate " + lpp.getStartDate());
 				personLpp.setStartDate(lpp.getStartDate());
 				personLppService.add(personLpp);
-				
+
 				List<Progressing> listProgress = progressingService.getAll();
 				if (!listProgress.isEmpty()) {
 					for (Progressing progress : listProgress) {
@@ -148,101 +129,163 @@ public class LppService extends BaseService {
 		}
 
 	}
-	
-	public PojoPagination getLppByPersonId() throws Exception{
+
+	public PojoPagination getLppByPersonId() throws Exception {
 		PojoPagination pojoLkh = new PojoPagination();
-		pojoLkh.setData(lppDao.getLppByPersonId(SessionHelper.getPerson().getId(),null));
-		pojoLkh.setCount(lppDao.getCountLppByPersonId(SessionHelper.getPerson().getId(),null));
+		pojoLkh.setData(lppDao.getLppByPersonId(SessionHelper.getPerson().getId(), null));
+		pojoLkh.setCount(lppDao.getCountLppByPersonId(SessionHelper.getPerson().getId(), null));
 		return pojoLkh;
 	}
-	
-	public PojoProgressLpp getProgressLppById(String id) throws Exception{
+
+	public PojoProgressLpp getProgressLppById(String id) throws Exception {
 		return lppDao.getProgressLppById(id);
 	}
-	
-	public PojoLaporan getDetailsLaporanById(String id) throws Exception{
+
+	public PojoLaporan getDetailsLaporanById(String id) throws Exception {
 		List<Object[]> result = lppDao.getLaporanLppById(id);
 		PojoLaporan pojoLaporan = new PojoLaporan();
 		List<Object> listFoto = new ArrayList<Object>();
 		for (Object[] o : result) {
-			pojoLaporan.setId((String)o[0]);
-			pojoLaporan.setName((String)o[1]);
-			pojoLaporan.setUploadDate((String)o[2]);
-			pojoLaporan.setVerificationDate((String)o[3]);
-			pojoLaporan.setDec((String)o[4]);
-			pojoLaporan.setFotoDepan(fileService.getFotoLaporan(path_foto_depan, (String)o[0],(String)o[5],(String)o[6]));
-			pojoLaporan.setFotoBelakang(fileService.getFotoLaporan(path_foto_belakang, (String)o[0],(String)o[11],(String)o[12]));
-			pojoLaporan.setFotoSamping(fileService.getFotoLaporan(path_foto_samping, (String)o[0],(String)o[7],(String)o[8]));
-			pojoLaporan.setFotoDalam(fileService.getFotoLaporan(path_foto_dalam, (String)o[0],(String)o[9],(String)o[10]));
-			
+			pojoLaporan.setId((String) o[0]);
+			pojoLaporan.setName((String) o[1]);
+			pojoLaporan.setUploadDate((String) o[2]);
+			pojoLaporan.setVerificationDate((String) o[3]);
+			pojoLaporan.setDec((String) o[4]);
+			pojoLaporan.setFotoDepan(
+					fileService.getFotoLaporan(path_foto_depan, (String) o[0], (String) o[5], (String) o[6]));
+			pojoLaporan.setFotoBelakang(
+					fileService.getFotoLaporan(path_foto_belakang, (String) o[0], (String) o[11], (String) o[12]));
+			pojoLaporan.setFotoSamping(
+					fileService.getFotoLaporan(path_foto_samping, (String) o[0], (String) o[7], (String) o[8]));
+			pojoLaporan.setFotoDalam(
+					fileService.getFotoLaporan(path_foto_dalam, (String) o[0], (String) o[9], (String) o[10]));
+
 		}
 		return pojoLaporan;
 	}
-	
-	public void addVerification(String id) throws Exception{
-		
-	}
-	
-	public void uploadFotoLaporan(String id,MultipartFile depan,MultipartFile samping,
-			MultipartFile dalam,MultipartFile belakang) throws Exception{
-	try {
-Laporan laporan = laporanService.getById(id);
-		
-		if(depan != null) {
-			if (laporan.getFileNameDepan() == null || laporan.getFileNameDepan() == null) {
-				System.out.println("masuk");
-				fileService.add(path_foto_depan, laporan, depan);	
-			}else {
-				fileService.edit(path_foto_depan, laporan, depan);
-			}
-			laporan.setFileNameDepan(depan.getOriginalFilename());
-			laporan.setTypeFileDepan(depan.getContentType());
-		}
-		
-		if(samping != null) {
-			if (laporan.getFileNameSamping() == null || laporan.getFileNameSamping() == null) {
-				fileService.add(path_foto_samping, laporan, samping);
-			}else {
-				fileService.edit(path_foto_samping, laporan, samping);
-			}
-			laporan.setFileNameSamping(samping.getOriginalFilename());
-			laporan.setTypeFileSamping(samping.getContentType());
-		}
-		
-		if(dalam != null) {
-			if (laporan.getFileNameDalam() == null || laporan.getFileNameDalam() == null) {
-				fileService.add(path_foto_dalam, laporan, dalam);
-			}else {
-				fileService.edit(path_foto_dalam, laporan, dalam);
-			}
-			laporan.setFileNameDalam(dalam.getOriginalFilename());
-			laporan.setTypeFileDalam(dalam.getContentType());
-		}
-		
-		if(belakang != null) {
-			if (laporan.getFileNameBelakang() == null || laporan.getFileNameBelakang() == null) {
-				fileService.add(path_foto_belakang, laporan, belakang);
-			}else {
-				fileService.edit(path_foto_belakang, laporan, belakang);
-			}
-			laporan.setFileNameBelakang(belakang.getOriginalFilename());
-			laporan.setTypeFileBelakang(belakang.getContentType());
-		}
-		
-		laporan.setUploadDate(new Timestamp(System.currentTimeMillis()));
-		laporanService.update(laporan);
 
-	} catch (Exception e) {
-		e.printStackTrace();
-		throw e;
-		// TODO: handle exception
-	}	
-	}	
-	
-	public void updateLaporanIsDone(String id) throws Exception{
+	public void verificationPersonLpp(String id) throws Exception {
+		try {
+			List<Object[]> result = laporanService.getStatusLaporanByPersonLppId(id);
+			for (Object[] o : result) {
+
+				if ((Boolean) o[2] == false) {
+					throw new Exception(((BigDecimal) o[1]).toString() + " % Progress has not been verified !");
+				}
+
+				PersonLpp personLpp = personLppService.getById(id);
+				personLpp.setVerificationDate(new Timestamp(System.currentTimeMillis()));
+				personLpp.setStatus(true);
+				personLppService.update(personLpp);
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	public void verificationProgress(String id) throws Exception {
+		try {
+			Laporan laporan = laporanService.getById(id);
+			if (laporan != null) {
+				laporan.setVerificationDate(new Timestamp(System.currentTimeMillis()));
+				laporan.setStatus(true);
+				laporanService.update(laporan);
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	public PojoPagination getLppbyAdmin(int page, int limit) throws Exception {
+		PojoPagination pj = new PojoPagination();
+		pj.setData(lppDao.getLppAdmin(page, limit));
+		pj.setCount(lppDao.getCountLppByAdmin());
+		return pj;
+	}
+
+	public PojoDetailLppAdmin getAdminDetail(String id) {
+		PojoDetailLppAdmin pj = new PojoDetailLppAdmin();
+		List<Object> ps = new ArrayList<Object>();
+		for (Object[] o : lppDao.getDetailLppAdmin(id)) {
+			pj.setCode((String) o[1]);
+			pj.setName((String) o[2]);
+			pj.setDescription((String) o[3]);
+			HashMap<String, Object> data = new HashMap<String, Object>();
+			data.put("name", o[4]);
+			data.put("startDate", o[5]);
+			data.put("verikasiDate", o[6]);
+			data.put("endDate", o[7]);
+			data.put("status", o[8]);
+
+			ps.add(data);
+
+		}
+		pj.setListPerson(ps);
+		return pj;
+	}
+
+	@Transactional
+	public void uploadFotoLaporan(String id, MultipartFile depan, MultipartFile samping, MultipartFile dalam,
+			MultipartFile belakang) throws Exception {
+		try {
+			Laporan laporan = laporanService.getById(id);
+
+			if (depan != null) {
+				if (laporan.getFileNameDepan() == null || laporan.getFileNameDepan() == null) {
+					System.out.println("masuk");
+					fileService.add(path_foto_depan, laporan, depan);
+				} else {
+					fileService.edit(path_foto_depan, laporan, depan);
+				}
+				laporan.setFileNameDepan(depan.getOriginalFilename());
+				laporan.setTypeFileDepan(depan.getContentType());
+			}
+
+			if (samping != null) {
+				if (laporan.getFileNameSamping() == null || laporan.getFileNameSamping() == null) {
+					fileService.add(path_foto_samping, laporan, samping);
+				} else {
+					fileService.edit(path_foto_samping, laporan, samping);
+				}
+				laporan.setFileNameSamping(samping.getOriginalFilename());
+				laporan.setTypeFileSamping(samping.getContentType());
+			}
+
+			if (dalam != null) {
+				if (laporan.getFileNameDalam() == null || laporan.getFileNameDalam() == null) {
+					fileService.add(path_foto_dalam, laporan, dalam);
+				} else {
+					fileService.edit(path_foto_dalam, laporan, dalam);
+				}
+				laporan.setFileNameDalam(dalam.getOriginalFilename());
+				laporan.setTypeFileDalam(dalam.getContentType());
+			}
+
+			if (belakang != null) {
+				if (laporan.getFileNameBelakang() == null || laporan.getFileNameBelakang() == null) {
+					fileService.add(path_foto_belakang, laporan, belakang);
+				} else {
+					fileService.edit(path_foto_belakang, laporan, belakang);
+				}
+				laporan.setFileNameBelakang(belakang.getOriginalFilename());
+				laporan.setTypeFileBelakang(belakang.getContentType());
+			}
+
+			laporan.setUploadDate(new Timestamp(System.currentTimeMillis()));
+			laporanService.update(laporan);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+			// TODO: handle exception
+		}
+	}
+
+	@Transactional
+	public void updateLaporanIsDone(String id) throws Exception {
 		PersonLpp personLpp = personLppService.getById(id);
 		personLpp.setEndDate(new Timestamp(System.currentTimeMillis()));
-		personLppService.update(personLpp);
+		personLppService.updatePersonLpp(personLpp);
 	}
-	
+
 }

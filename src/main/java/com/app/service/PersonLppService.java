@@ -34,7 +34,7 @@ public class PersonLppService {
 	
 	public void valBkExist(PersonLpp personLpp) throws Exception{
 		PersonLpp tempPersonLpp = getById(personLpp.getId());
-		if(!personLpp.getPerson().getId().equals(SessionHelper.getPerson().getId())){
+		if(!tempPersonLpp.getPerson().getId().equals(SessionHelper.getPerson().getId())){
 			throw new Exception("Person not match !");
 		}
 	}
@@ -48,14 +48,16 @@ public class PersonLppService {
 		}
 	}
 	
+	public void updatePersonLpp(PersonLpp personLpp) throws Exception{
+		valIdExist(personLpp);
+		valBkExist(personLpp);
+		update(personLpp);
+	}
+	
 	public void update(PersonLpp personLpp) throws Exception{	
 		try {
-			valIdExist(personLpp);
-			valBkExist(personLpp);
-			
 			personLppDao.edit(personLpp);
 		} catch (IOException e) {
-			e.printStackTrace();
 			throw e;
 		}
 	}

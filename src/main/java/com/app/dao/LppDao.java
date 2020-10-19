@@ -139,7 +139,7 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 		List<Object[]> results = em.createNativeQuery(bBuilder("select tpl.id , tp.\"name\" ,\r\n"
 				+ "(case when tpl.start_date\\:\\:text is null then '-' else tpl.start_date\\:\\:text end) ,\r\n"
 				+ "(case when tpl.end_date\\:\\:text is null then '-' else tpl.end_date\\:\\:text end),\r\n"
-				+ "(case when tl2.verification_date\\:\\:text is null then '-' else tl2.verification_date\\:\\:text end),\r\n"
+				+ "(case when tpl.verification_date\\:\\:text is null then '-' else tpl.verification_date\\:\\:text end),\r\n"
 				+ "tl2.id as progressId,tp2.progress,tl2.status\r\n"
 				+ "from \r\n"
 				+ "tb_lpp tl\r\n"

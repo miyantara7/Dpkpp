@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.app.model.Lpp;
 import com.app.model.Person;
 import com.app.pojo.PojoPerson;
 
@@ -66,6 +67,15 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 	@Override
 	public <T> void delete(T entity) throws Exception{
 		em.remove(entity);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Person getById(String id) throws Exception{
+		List<Person> results = em.createQuery("FROM Person where id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return !results.isEmpty() ? results.get(0) : null;
 	}
 	
 	public String getQueryForSearch(String inquiry) throws Exception{
