@@ -229,7 +229,7 @@ public class AbsentSevice extends BaseService {
 			}
 		} else {
 			try {
-				fileIn = new File(photoNotFound);
+				fileIn = new File(path + photoNotFound);
 				System.out.println("ext in"+input.getTypeFileAbsenIn());
 				photoIn = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(fileIn));
 				rtData.put("photoIn", photoIn);
@@ -252,7 +252,7 @@ public class AbsentSevice extends BaseService {
 			}
 		} else {
 			try {
-				fileOut = new File(photoNotFound);
+				fileOut = new File(path + photoNotFound);
 				photoOut = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(fileOut));
 				rtData.put("photoOut", photoOut);
 				rtData.put("extOut", "image/"+FilenameUtils.getExtension(fileOut.toString()));

@@ -59,7 +59,7 @@ public class FileService {
 					}
 				}else {
 					try {
-						file = new File(photoNotFound);
+						file = new File(path_upload + photoNotFound);
 						foto.put("foto", Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file)));
 						foto.put("type", FilenameUtils.getExtension(file.toString()));
 						foto.put("fileName", FilenameUtils.getBaseName(file.toString()));

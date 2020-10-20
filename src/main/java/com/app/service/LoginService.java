@@ -87,7 +87,7 @@ public class LoginService extends BaseService implements UserDetailsService {
 					}
 				}else {
 					try {
-						file = new File(photoNotFound);
+						file = new File(path + photoNotFound);
 						photo = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
 						Person person = user.getPerson();
 						person.setPhoto(photo);
