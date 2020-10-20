@@ -129,7 +129,7 @@ public class PersonService extends BaseService {
 			}
 		} else {
 			try {
-				file = new File(path + photoNotFound);
+				file = new File(photoNotFound);
 				photo = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
 				person.setPhoto(photo);
 				person.setFileName(file.getName());
@@ -160,7 +160,7 @@ public class PersonService extends BaseService {
 			}
 		} else {
 			try {
-				file = new File(path + photoNotFound);
+				file = new File(photoNotFound);
 				photo = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
 				person.setPhoto(photo);
 				person.setFileName(file.getName());
