@@ -30,8 +30,7 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 
 	@Override
 	public <T> void delete(T entity) throws Exception {
-		// TODO Auto-generated method stub
-		
+		em.remove(entity);
 	}
 	
 	@SuppressWarnings("unchecked")

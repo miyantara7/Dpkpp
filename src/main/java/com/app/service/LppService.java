@@ -368,5 +368,21 @@ public class LppService extends BaseService {
 		}
 		return pojoLaporan;
 	}
+	
+	public void delete(String id) throws Exception {
+		
+		try {
+			Lpp lpp= lppDao.getById(id);
+			if(lpp == null) {
+				throw new Exception("Data Not Found");
+			}else {
+				lppDao.delete(lpp);
+			}
+			
+		} catch (Exception e) {
+			throw e;
+			// TODO: handle exception
+		}
+	}
 
 }
