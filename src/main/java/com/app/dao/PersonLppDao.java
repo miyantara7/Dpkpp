@@ -37,4 +37,22 @@ public class PersonLppDao extends BaseDao implements BaseMasterDao {
 		return !results.isEmpty() ? results.get(0) : null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<PersonLpp> getListByBk(String id) throws Exception{
+		List<PersonLpp> results = em.createQuery("FROM PersonLpp where lpp.id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return results;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public PersonLpp getLppByPersonAndLpp(String personId,String lppId) throws Exception{
+		List<PersonLpp> results = em.createQuery("FROM PersonLpp where person.id = :personId and lpp.id = :lppId")
+				.setParameter("personId", personId)
+				.setParameter("lppId", lppId)
+				.getResultList();
+		
+		return !results.isEmpty() ? results.get(0) : null;
+	}
 }

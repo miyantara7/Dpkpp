@@ -1,5 +1,6 @@
 package com.app.controller;
 
+import javax.transaction.RollbackException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.app.model.Person;
+import com.app.pojo.PojoLpp;
 import com.app.service.LppService;
 
 @RestController
@@ -179,9 +184,48 @@ public class LppController {
 	@DeleteMapping(value = "/{id}")
 	@Transactional
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<?> deleteLpp(@PathVariable("id") String id) throws Exception {
+	public ResponseEntity<?> deleteLpp(@PathVariable("id") String id) throws Exception{
 		try {
-			lppService.delete(id);;
+			lppService.deleteLpp(id);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (RollbackException e) {
+			return new ResponseEntity<>(e.getMessage()+ " Person Lpp have foreign key ! ", HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		} 
+	}
+	
+	@PostMapping(value = "/add-person/{id}")
+	@Transactional
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public ResponseEntity<?> addPersonLpp(@PathVariable("id") String id, @RequestBody PojoLpp listPerson) throws Exception {
+		try {
+			lppService.addPersonLpp(id, listPerson);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PutMapping(value = "/edit-person/{id}")
+	@Transactional
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public ResponseEntity<?> editPersonLpp(@PathVariable("id") String id, @RequestBody Person person) throws Exception {
+		try {
+			lppService.editPersonLpp(id, person);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@DeleteMapping(value = "/delete-person/{id}")
+	@Transactional
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public ResponseEntity<?> deletePersonLpp(@PathVariable("id") String id) throws Exception {
+		try {
+			lppService.deletePersonLpp(id);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

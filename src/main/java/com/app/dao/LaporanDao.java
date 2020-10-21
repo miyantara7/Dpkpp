@@ -24,8 +24,7 @@ public class LaporanDao extends BaseDao implements BaseMasterDao {
 
 	@Override
 	public <T> void delete(T entity) throws Exception {
-		// TODO Auto-generated method stub
-		
+		em.remove(entity);	
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -35,6 +34,15 @@ public class LaporanDao extends BaseDao implements BaseMasterDao {
 				.getResultList();
 		
 		return !results.isEmpty() ? results.get(0) : null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Laporan> getListByBk(String id) throws Exception{
+		List<Laporan> results = em.createQuery("FROM Laporan where personLpp.id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return results;
 	}
 
 	@SuppressWarnings("unchecked")

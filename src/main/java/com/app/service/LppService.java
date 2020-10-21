@@ -1,20 +1,14 @@
 package com.app.service;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.persistence.RollbackException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +76,12 @@ public class LppService extends BaseService {
 			throw new Exception("LPP not exist !");
 		}
 	}
+	
+	public void valIdExist(Lpp lpp) throws Exception{
+		if(lppDao.getById(lpp.getId()) == null){
+			throw new Exception("LPP not exist !");
+		}
+	}
 
 	@Transactional
 	public void add(String pojoLpps) throws Exception {
@@ -109,7 +109,6 @@ public class LppService extends BaseService {
 				personLpp.setLpp(lpp);
 				personLpp.setPerson(person);
 				personLpp.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-				System.out.println("lpp startdate " + lpp.getStartDate());
 				personLpp.setStartDate(lpp.getStartDate());
 				personLppService.add(personLpp);
 
@@ -248,41 +247,40 @@ public class LppService extends BaseService {
 			Laporan laporan = laporanService.getById(id);
 
 			if (depan != null) {
-				if (laporan.getFileNameDepan() == null || laporan.getFileNameDepan() == null) {
-					System.out.println("masuk");
+				if (laporan.getFileNameDepan() == null && laporan.getTypeFileDepan() == null) {
 					fileService.add(path_foto_depan, laporan, depan);
 				} else {
-					fileService.edit(path_foto_depan, laporan, depan);
+					fileService.editDepan(path_foto_depan, laporan, depan);
 				}
 				laporan.setFileNameDepan(depan.getOriginalFilename());
 				laporan.setTypeFileDepan(depan.getContentType());
 			}
 
 			if (samping != null) {
-				if (laporan.getFileNameSamping() == null || laporan.getFileNameSamping() == null) {
+				if (laporan.getFileNameSamping() == null && laporan.getTypeFileSamping() == null) {
 					fileService.add(path_foto_samping, laporan, samping);
 				} else {
-					fileService.edit(path_foto_samping, laporan, samping);
+					fileService.editSamping(path_foto_samping, laporan, samping);
 				}
 				laporan.setFileNameSamping(samping.getOriginalFilename());
 				laporan.setTypeFileSamping(samping.getContentType());
 			}
 
 			if (dalam != null) {
-				if (laporan.getFileNameDalam() == null || laporan.getFileNameDalam() == null) {
+				if (laporan.getFileNameDalam() == null && laporan.getTypeFileDalam() == null) {
 					fileService.add(path_foto_dalam, laporan, dalam);
 				} else {
-					fileService.edit(path_foto_dalam, laporan, dalam);
+					fileService.editDalam(path_foto_dalam, laporan, dalam);
 				}
 				laporan.setFileNameDalam(dalam.getOriginalFilename());
 				laporan.setTypeFileDalam(dalam.getContentType());
 			}
 
 			if (belakang != null) {
-				if (laporan.getFileNameBelakang() == null || laporan.getFileNameBelakang() == null) {
+				if (laporan.getFileNameBelakang() == null && laporan.getTypeFileBelakang() == null) {
 					fileService.add(path_foto_belakang, laporan, belakang);
 				} else {
-					fileService.edit(path_foto_belakang, laporan, belakang);
+					fileService.editBelakang(path_foto_belakang, laporan, belakang);
 				}
 				laporan.setFileNameBelakang(belakang.getOriginalFilename());
 				laporan.setTypeFileBelakang(belakang.getContentType());
@@ -294,7 +292,6 @@ public class LppService extends BaseService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
-			// TODO: handle exception
 		}
 	}
 	
@@ -369,20 +366,74 @@ public class LppService extends BaseService {
 		return pojoLaporan;
 	}
 	
-	public void delete(String id) throws Exception {
-		
+	public void deleteLpp(String id) throws Exception{
 		try {
-			Lpp lpp= lppDao.getById(id);
-			if(lpp == null) {
-				throw new Exception("Data Not Found");
-			}else {
-				lppDao.delete(lpp);
+			List<PersonLpp> listPersonLpp = personLppService.getByBk(id);
+			if (!listPersonLpp.isEmpty() || listPersonLpp != null) {
+				for (PersonLpp personLpp : listPersonLpp) {				
+					deleteLaporan(personLpp.getId());
+					personLppService.delete(personLpp);
+				}
 			}
-			
+			delete(getById(id));
 		} catch (Exception e) {
 			throw e;
-			// TODO: handle exception
+		}
+	}
+	
+	public void deleteLaporan(String personLppId) throws Exception{
+		try {
+			List<Laporan> listLaporan = laporanService.getListByBk(personLppId);
+			if (!listLaporan.isEmpty() || listLaporan != null) {
+				for (Laporan laporan : listLaporan) {
+					fileService.deleteDepan(path_foto_depan, laporan);
+					fileService.deleteSamping(path_foto_samping, laporan);
+					fileService.deleteDalam(path_foto_dalam, laporan);
+					fileService.deleteBelakang(path_foto_belakang, laporan);
+					laporanService.delete(laporan);
+				}
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void delete(Lpp lpp) throws Exception,RollbackException	 {	
+		try {
+			valIdExist(lpp);
+
+			lppDao.delete(lpp);
+		} catch (Exception e) {
+			throw e;
 		}
 	}
 
+	public void addPersonLpp(String id,PojoLpp pojoLpp) throws Exception{
+		try {
+			pojoLpp.setLpp(getById(id));
+			addDetail(pojoLpp);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void editPersonLpp(String id,Person person) throws Exception{
+		try {
+			PersonLpp personLpp = personLppService.getById(id);
+			personLpp.setPerson(person);
+			personLppService.update(personLpp);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void deletePersonLpp(String id) throws Exception{
+		try {
+			PersonLpp personLpp = personLppService.getById(id);
+			deleteLaporan(personLpp.getId());
+			personLppService.delete(personLpp);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
 }

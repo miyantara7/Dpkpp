@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.dao.LaporanDao;
 import com.app.model.Laporan;
+import com.app.model.PersonLpp;
 
 @Service
 public class LaporanService {
@@ -24,12 +25,16 @@ public class LaporanService {
 		}
 	}
 	
+	public List<Laporan> getListByBk(String id) throws Exception{
+		return laporanDao.getListByBk(id);
+	}
+	
 	public void valIdExist(Laporan laporan) throws Exception{
 		if(laporanDao.getById(laporan.getId()) == null){
 			throw new Exception("Laporan not exist !");
 		}
 	}
-	
+
 	public void add(Laporan laporan) throws Exception{	
 		try {
 			laporanDao.save(laporan);
@@ -43,6 +48,16 @@ public class LaporanService {
 			valIdExist(laporan);
 			
 			laporanDao.edit(laporan);
+		} catch (IOException e) {
+			throw e;
+		}
+	}
+	
+	public void delete(Laporan laporan) throws Exception{
+		try {
+			valIdExist(laporan);
+			
+			laporanDao.delete(laporan);
 		} catch (IOException e) {
 			throw e;
 		}

@@ -42,6 +42,18 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 		return !results.isEmpty() ? results.get(0) : null;
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	public void deleteById(String id) throws Exception {
+		List<Lpp> results = em.createQuery("FROM Lpp where id = :id")
+				.setParameter("id", id)
+				.getResultList();
+
+		if (!results.isEmpty()) {
+			delete(results.get(0));
+		}
+	}
+	
 	public String getQueryGetLppAdmin() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tl.id,tl.code,tl.name from tb_lpp tl");
