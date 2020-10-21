@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +47,20 @@ public class UserController {
 	public ResponseEntity<?> update(@RequestBody HashMap<String, String> user) throws Exception {
 		try {
 			userService.updatePassword(user);;
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
+	
+	@PostMapping("/update-password/admin/{id}")
+	@Transactional
+	public ResponseEntity<?> updateAdmin(@PathVariable("id")String id,@RequestBody HashMap<String, String> user) throws Exception {
+		try {
+			userService.updatePasswordAdmin(id, user);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

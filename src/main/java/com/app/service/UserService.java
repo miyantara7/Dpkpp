@@ -169,5 +169,23 @@ public class UserService extends BaseService {
 		
 	}
 	
+	public User findByIdUserAdmin(String id) {
+		User user =  userDao.getUserById(id);		
+		return user;
+		
+	}
+	
+	
+public void updatePasswordAdmin(String id,HashMap<String, String> user) throws Exception {
+		
+		User userOld = userDao.getUserByIdPerson(id);
+		if(userOld != null) {
+			userOld.setPassword(bcryptEncoder.encode(user.get("newPassword")));
+			edit(userOld);
+		}
+		else {
+			throw new Exception("User Not Found");
+		}
+	}
 	
 }
