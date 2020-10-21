@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.app.service.PersonService;
 import com.app.service.PositionService;
+import com.app.service.RoleUserService;
 import com.app.service.UnitService;
 
 @RestController
@@ -27,6 +28,9 @@ public class DpkppLovController {
 	
 	@Autowired
 	private PersonService petugas;
+	
+	@Autowired
+	private RoleUserService role;
 	
 	@GetMapping("/unit")
 	@Transactional
@@ -62,6 +66,15 @@ public class DpkppLovController {
 	public ResponseEntity<?> getPetugas() throws Exception {
 		try {
 			return new ResponseEntity<>(petugas.getPetugas(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/role")
+	public ResponseEntity<?> getRole() throws Exception {
+		try {
+			return new ResponseEntity<>(role.getRoleList(), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}

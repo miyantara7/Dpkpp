@@ -17,4 +17,12 @@ public class RoleUserDao extends BaseDao {
 		
 		return !list.isEmpty() ? list.get(0) : null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RoleUser> getRoleList() {
+		List<RoleUser> list = em.createQuery("From RoleUser")
+				.getResultList();
+		
+		return list;
+	}
 }
