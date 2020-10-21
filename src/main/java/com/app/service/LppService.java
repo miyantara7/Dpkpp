@@ -226,14 +226,15 @@ public class LppService extends BaseService {
 			pj.setName((String) o[2]);
 			pj.setDescription((String) o[3]);
 			HashMap<String, Object> data = new HashMap<String, Object>();
+		if(o[4] !=null) {
 			data.put("id", o[0]);
 			data.put("name", o[4]);
 			data.put("startDate", o[5]);
 			data.put("verikasiDate", o[6]);
 			data.put("endDate", o[7]);
 			data.put("status", o[8]);
-
 			ps.add(data);
+		}
 
 		}
 		pj.setListPerson(ps);

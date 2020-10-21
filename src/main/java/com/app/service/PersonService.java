@@ -69,28 +69,19 @@ public class PersonService extends BaseService {
 		}
 	}
 
-	public void editPerson(MultipartFile file, String persons) throws Exception {
-		Person person = new Person();
+	public void editPerson(MultipartFile file) throws Exception {
 		File fileDel = null;
-		if (persons != null) {
-			person = super.readValue(persons, Person.class);
-		}
 		try {
 			Person tempPerson = personDao.getPersonById(SessionHelper.getPerson().getId());
 			if(tempPerson!=null) {
 				if (file != null) {
 					fileDel = new File(path + "/" + tempPerson.getId() + "_" + tempPerson.getFileName());
 					fileDel.delete();
+					System.out.println("masuk file");
 					tempPerson.setTypeFile(file.getContentType());
 					tempPerson.setFileName(file.getOriginalFilename());
 				}
 				System.out.println(tempPerson.getName());
-				if (person != null) {
-					tempPerson.setName(person.getName());
-					tempPerson.setGender(person.getGender());	
-					System.out.println("N nUll"+tempPerson.getName());
-				}
-				
 				if (file != null) {
 					InputStream is = file.getInputStream();
 					Files.copy(is, Paths.get(path + tempPerson.getId() + "_" + tempPerson.getFileName()),
@@ -107,6 +98,19 @@ public class PersonService extends BaseService {
 	public void edit(Person person) throws Exception {
 		try {
 			personDao.edit(person);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void editPerson(Person person) throws Exception {
+		try {
+			Person ps = personDao.getById(SessionHelper.getPerson().getId());
+			System.out.println("ini geneder"+person.getGender());
+			ps.setName(person.getName());
+			ps.setNip(person.getNip());
+			ps.setGender(person.getGender());
+			personDao.edit(ps);
 		} catch (Exception e) {
 			throw e;
 		}
