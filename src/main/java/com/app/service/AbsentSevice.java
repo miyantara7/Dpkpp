@@ -272,6 +272,9 @@ public class AbsentSevice extends BaseService {
 			Absent absent = absentDao.getAbsentByPersonId(absents.getPerson().getId());
 			if (absent.getId() == null) {
 				absents.setStatus("APPROVE");
+				absents.setDateOut(new Date());
+				absents.setDateIn(new Date());
+				absents.setLovAbsent(absents.getLovAbsent());
 				absents.setCreatedBy(SessionHelper.getPerson().getName());
 				absentDao.save(absents);	
 			} else {
