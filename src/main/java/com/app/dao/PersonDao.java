@@ -122,7 +122,7 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 	@SuppressWarnings("unchecked")
 	public List<Object> getPetugas(){
 		List<Object> data = new ArrayList<Object>();
-		StringBuilder sb = new StringBuilder("select tp.nip,tp.\"name\" from tb_person tp \r\n" + 
+		StringBuilder sb = new StringBuilder("select tp.id,tp.nip,tp.\"name\" from tb_person tp \r\n" + 
 				"join tb_users us on us.person_id = tp.id\r\n" + 
 				"join tb_role_user rl on rl.id = us.role_user_id \r\n" + 
 				"where rl.\"name\" = 'ROLE_PETUGAS'");

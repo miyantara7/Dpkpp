@@ -28,9 +28,9 @@ public class LppController {
 	@PostMapping
 	@Transactional
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<?> add(MultipartFile file, String lpp) throws Exception {
+	public ResponseEntity<?> add(String lpp) throws Exception {
 		try {
-			lppService.add(file, lpp);
+			lppService.add(lpp);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

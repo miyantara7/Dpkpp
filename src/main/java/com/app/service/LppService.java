@@ -84,18 +84,15 @@ public class LppService extends BaseService {
 	}
 
 	@Transactional
-	public void add(MultipartFile file, String pojoLpps) throws Exception {
+	public void add(String pojoLpps) throws Exception {
 		try {
 			PojoLpp pojoLpp = new PojoLpp();
 			pojoLpp = super.readValue(pojoLpps, PojoLpp.class);
 			Lpp lpp = pojoLpp.getLpp();
-			lpp.setTypeFile(file.getContentType());
-			lpp.setFileName(file.getOriginalFilename());
 			lpp.setCreatedBy(SessionHelper.getPerson().getName());
 			lpp.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 			lpp.setPerson(SessionHelper.getPerson());
 			lppDao.save(lpp);
-			fileService.addFileReport(file, lpp);
 			addDetail(pojoLpp);
 		} catch (IOException e) {
 			throw e;

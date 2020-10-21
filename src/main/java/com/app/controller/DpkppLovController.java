@@ -59,7 +59,6 @@ public class DpkppLovController {
 	}
 	
 	@GetMapping("/petugas")
-	@Transactional
 	public ResponseEntity<?> getPetugas() throws Exception {
 		try {
 			return new ResponseEntity<>(petugas.getPetugas(), HttpStatus.OK);
