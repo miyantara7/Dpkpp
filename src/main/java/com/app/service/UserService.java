@@ -114,6 +114,7 @@ public class UserService extends BaseService {
 		newUser.setUsername(regisUser.getUsername());
 		newUser.setPassword(bcryptEncoder.encode(regisUser.getPassword()));
 		newUser.setPerson(regisUser.getPerson());
+		newUser.setRoleUser(regisUser.getRoleUser());
 		File files = new File(path);
 		String fileName="";
 		InputStream is=null;
@@ -134,7 +135,6 @@ public class UserService extends BaseService {
 					newUser.setPerson(person);
 				}
 
-				newUser.setRoleUser(roleUserService.getRole(Constants.USER));
 				personService.save(newUser.getPerson());
 				userDaoHibernate.save(newUser);	
 		

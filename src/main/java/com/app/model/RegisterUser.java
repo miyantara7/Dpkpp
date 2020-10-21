@@ -4,7 +4,17 @@ public class RegisterUser {
 	private String username;
 	private String password;
 	private Person person;
+	private RoleUser roleUser;
 	
+	
+	public RoleUser getRoleUser() {
+		return roleUser;
+	}
+
+	public void setRoleUser(RoleUser roleUser) {
+		this.roleUser = roleUser;
+	}
+
 	public Person getPerson() {
 		return person;
 	}

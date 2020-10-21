@@ -53,8 +53,8 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 	public String getQueryGetLppAdminDetail() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tp.id,tl.code,tl.\"name\" as na,tl.description,p.\"name\" ,tp.start_date ,tp.verification_date ,tp.end_date ,tp.status from tb_lpp tl\r\n" + 
-				"join tb_person_lpp tp on tp.lpp_id = tl.id \r\n" + 
-				"join tb_person p on p.id = tp.person_id \r\n" + 
+				"left join tb_person_lpp tp on tp.lpp_id = tl.id \r\n" + 
+				"left join tb_person p on p.id = tp.person_id \r\n" + 
 				"where tl.id =:id");
 		
 		return sb.toString();
@@ -206,10 +206,10 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 				+ "tl2.file_name_dalam,tl2.type_file_dalam,tl2.file_name_belakang,tl2.type_file_belakang,tl.name as name_pro,tp2.description as desc_y \r\n"
 				+ "from \r\n"
 				+ "tb_lpp tl\r\n"
-				+ "join tb_person_lpp tpl on tl.id = tpl.lpp_id \r\n"
-				+ "join tb_person tp on tpl.person_id = tp.id\r\n"
-				+ "join tb_laporan tl2 on tl2.person_lpp_id = tpl.id \r\n"
-				+ "join tb_progressing tp2 on tl2.progress_id = tp2.id\r\n"
+				+ "left join tb_person_lpp tpl on tl.id = tpl.lpp_id \r\n"
+				+ "left join tb_person tp on tpl.person_id = tp.id\r\n"
+				+ "left join tb_laporan tl2 on tl2.person_lpp_id = tpl.id \r\n"
+				+ "left join tb_progressing tp2 on tl2.progress_id = tp2.id\r\n"
 				+ "where tl2.id = :id"))
 				.setParameter("id", id)
 				.getResultList();
