@@ -172,8 +172,12 @@ public class LoginService extends BaseService implements UserDetailsService {
 		
 		final Users userDetails = (Users) loadUserByUsername(authenticationRequest.getUsername());
 		
-		checkUserLogin(authenticationRequest);
-		
+		try {
+			checkUserLogin(authenticationRequest);
+		} catch (Exception e) {
+			throw e;
+			// TODO: handle exception
+		}
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
 		final String token = jwtTokenUtil.generateToken(userDetails);
