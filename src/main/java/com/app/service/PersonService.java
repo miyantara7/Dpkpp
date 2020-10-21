@@ -191,4 +191,8 @@ public class PersonService extends BaseService {
 	public List<Object[]> getPojoPersonById(String id) throws Exception {
 		return personDao.getPojoPersonById(id);
 	}
+	
+	public List<Object> getPetugas() throws Exception {
+		return personDao.getPetugas();
+	}
 }

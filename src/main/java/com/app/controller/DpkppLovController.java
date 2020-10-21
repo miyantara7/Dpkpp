@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.service.PersonService;
 import com.app.service.PositionService;
 import com.app.service.UnitService;
 
@@ -23,6 +24,9 @@ public class DpkppLovController {
 	
 	@Autowired
 	private PositionService positionService;
+	
+	@Autowired
+	private PersonService petugas;
 	
 	@GetMapping("/unit")
 	@Transactional
@@ -49,6 +53,16 @@ public class DpkppLovController {
 	public ResponseEntity<?> getAllAbsent() throws Exception {
 		try {
 			return new ResponseEntity<>(positionService.getAllAbsent(), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping("/petugas")
+	@Transactional
+	public ResponseEntity<?> getPetugas() throws Exception {
+		try {
+			return new ResponseEntity<>(petugas.getPetugas(), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}

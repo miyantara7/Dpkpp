@@ -1,6 +1,8 @@
 package com.app.dao;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -114,6 +116,29 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForSearch(inquiry)).getSingleResult();
 		
 		return value.intValue();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Object> getPetugas(){
+		List<Object> data = new ArrayList<Object>();
+		StringBuilder sb = new StringBuilder("select tp.nip,tp.\"name\" from tb_person tp \r\n" + 
+				"join tb_users us on us.person_id = tp.id\r\n" + 
+				"join tb_role_user rl on rl.id = us.role_user_id \r\n" + 
+				"where rl.\"name\" = 'ROLE_PETUGAS'");
+		List<Object[]> ls = em.createNativeQuery(sb.toString()).getResultList();
+		
+		for(Object[] o:ls) {
+			HashMap<String, Object> s = new HashMap<String, Object>();
+			s.put("id",o[0]);
+			s.put("nip",o[1]);
+			s.put("nama",o[2]);
+			data.add(s);
+		}
+		
+		
+		
+		return data;
 	}
 	
 }
