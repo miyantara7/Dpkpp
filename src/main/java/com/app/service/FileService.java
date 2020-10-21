@@ -48,7 +48,6 @@ public class FileService {
 			String filePath = id + "_" + fileName;
 			File file;	
 				file = new File(path + filePath);
-				System.out.println(file.toString());
 				if (file.exists()) {
 					try {				
 						foto.put("foto", Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file)));
@@ -73,16 +72,85 @@ public class FileService {
 		return foto;
 	}
 	
-	public void edit(String path,Laporan laporan,MultipartFile file) throws Exception{
+	public void editDepan(String path,Laporan laporan,MultipartFile file) throws Exception{
 		try {
-			File fileDel = new File(path + laporan.getId() + "_" + laporan.getFileNameDepan());
-			if (fileDel.delete()) {
-				InputStream is = file.getInputStream();
-				Files.copy(is, Paths.get(path + laporan.getId() + "_" + file.getOriginalFilename()),
-						StandardCopyOption.REPLACE_EXISTING);
-			}
+			deleteDepan(path,laporan);
+			add(path, laporan, file);
 		} catch (Exception e) {
 			throw e;
+		}
+	}
+	
+	public void editSamping(String path,Laporan laporan,MultipartFile file) throws Exception{
+		try {
+			deleteSamping(path,laporan);
+			add(path, laporan, file);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void editDalam(String path,Laporan laporan,MultipartFile file) throws Exception{
+		try {
+			deleteDalam(path,laporan);
+			add(path, laporan, file);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void editBelakang(String path,Laporan laporan,MultipartFile file) throws Exception{
+		try {
+			deleteBelakang(path,laporan);
+			add(path, laporan, file);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	
+	
+	public void deleteDepan(String path,Laporan laporan) throws Exception{
+		try {
+			File file = new File(path + laporan.getId() + "_" + laporan.getFileNameDepan());
+			if (file.delete()) {
+				System.out.println(laporan.getId() + "_" + laporan.getFileNameDepan()+" has deleted !");
+			}
+		} catch (Exception e) {
+			throw new Exception("Cannot delete file !");
+		}
+	}
+	
+	public void deleteSamping(String path,Laporan laporan) throws Exception{
+		try {
+			File file = new File(path + laporan.getId() + "_" + laporan.getFileNameSamping());
+			if (file.delete()) {
+				System.out.println(laporan.getId() + "_" + laporan.getFileNameSamping()+" has deleted !");
+			}
+		} catch (Exception e) {
+			throw new Exception("Cannot delete file !");
+		}
+	}
+	
+	public void deleteDalam(String path,Laporan laporan) throws Exception{
+		try {
+			File file = new File(path + laporan.getId() + "_" + laporan.getFileNameDalam());
+			if (file.delete()) {
+				System.out.println(laporan.getId() + "_" + laporan.getFileNameDalam()+" has deleted !");
+			}
+		} catch (Exception e) {
+			throw new Exception("Cannot delete file !");
+		}
+	}
+	
+	public void deleteBelakang(String path,Laporan laporan) throws Exception{
+		try {
+			File file = new File(path + laporan.getId() + "_" + laporan.getFileNameBelakang());
+			if (file.delete()) {
+				System.out.println(laporan.getId() + "_" + laporan.getFileNameBelakang() +" has deleted !");
+			}
+		} catch (Exception e) {
+			throw new Exception("Cannot delete file !");
 		}
 	}
 	
@@ -91,7 +159,6 @@ public class FileService {
 			InputStream is = file.getInputStream();
 			Files.copy(is, Paths.get(path + laporan.getId() + "_" + file.getOriginalFilename()),
 					StandardCopyOption.REPLACE_EXISTING);
-			System.out.println(path + laporan.getId() + "_" + file.getOriginalFilename());
 		} catch (Exception e) {
 			throw e;
 		}
