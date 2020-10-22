@@ -170,8 +170,10 @@ public class PersonService extends BaseService {
 
 		HashMap<String, Object> rtData = new HashMap<String, Object>();
 		Person person = personDao.getById(id);
+		User user = userService.getUserbyIdPersonAdmin(id);
 		rtData.put("person", fileService.getFotoPerson(person));
 		rtData.put("absen", absentService.getUserAbsentByIdAdmin(id));
+		rtData.put("user",user);
 		return rtData;
 	}
 

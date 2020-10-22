@@ -52,8 +52,9 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 	
 	public String getQueryForSearch(String inquiry) throws Exception{
 		StringBuilder sb = new StringBuilder();
-		sb.append("select tp.id ,tp.nip , tp.name,tp.gender "+
-				"from tb_person tp ) as p " +
+		sb.append("select tp.id ,tp.nip , tp.name,tp.gender,ru.name as role "+
+				"from tb_person tp join tb_users us on us.person_id = tp.id"
+				+ " join tb_role_user ru on ru.id = us.role_user_id ) as p " +
 				"WHERE 1=1 ");
 		
 		  if (inquiry != null && !inquiry.isEmpty()) {
@@ -67,7 +68,7 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<?> getAllPersonByPaging(int page,int limit,String inquiry)throws Exception{
-		String sql = bBuilder("Select p.id,p.nip,p.name,p.gender "
+		String sql = bBuilder("Select p.id,p.nip,p.name,p.gender,p.role "
 				+ "FROM ( " );	  
 		List<Object[]> list = em.createNativeQuery(sql + getQueryForSearch(inquiry))
 				.setFirstResult((page-1) * limit)
@@ -80,6 +81,7 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 			person.put("nip", (String)o[1]);
 			person.put("name", (String)o[2]);
 			person.put("gender", (String)o[3]);
+			person.put("role",(String)o[4]);
 			listPerson.add(person);
 		}
 		return listPerson;

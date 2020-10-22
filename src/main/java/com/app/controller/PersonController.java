@@ -90,7 +90,6 @@ public class PersonController {
 		}
 	}
 	@DeleteMapping("/admin/delete-person")
-	@Transactional
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<?> deletePerson(@RequestBody List<Person> listPerson) throws Exception {
 		try {			

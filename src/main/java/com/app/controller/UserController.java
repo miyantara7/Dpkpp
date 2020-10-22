@@ -92,4 +92,19 @@ public class UserController {
 		}
 	}
 	
+	
+	@PostMapping("/ganti-role/admin")
+	@Transactional
+	public ResponseEntity<?> changeRole(@RequestBody HashMap<String, String> user) throws Exception {
+		try {
+			userService.changeRole(user);;
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+		
+	}
+	
+	
 }

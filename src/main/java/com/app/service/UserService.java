@@ -26,6 +26,7 @@ import com.app.helper.SessionHelper;
 import com.app.model.Absent;
 import com.app.model.Person;
 import com.app.model.RegisterUser;
+import com.app.model.RoleUser;
 import com.app.model.User;
 
 
@@ -194,6 +195,10 @@ public class UserService extends BaseService {
 	}
 	
 	
+	public User getUserbyIdPersonAdmin(String id) {
+		return userDao.getUserByIdPerson(id);
+	}
+	
 	public void updatePasswordAdmin(String id,HashMap<String, String> user) throws Exception {
 		
 		User userOld = userDao.getUserByIdPerson(id);
@@ -203,6 +208,20 @@ public class UserService extends BaseService {
 		}
 		else {
 			throw new Exception("User Not Found");
+		}
+	}
+	
+	public void changeRole(HashMap<String, String> role) throws Exception {
+		User user =  getUserbyIdPersonAdmin(role.get("person"));
+		RoleUser roles = new RoleUser();
+		roles.setId(role.get("role"));
+		user.setRoleUser(roles);
+		try {
+			edit(user);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw e;
 		}
 	}
 	
