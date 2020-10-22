@@ -411,9 +411,29 @@ public class LppService extends BaseService {
 
 	public void addPersonLpp(String id,PojoLpp pojoLpp) throws Exception{
 		try {
-			pojoLpp.setLpp(getById(id));
+			Lpp lpp = getById(id);
+			lpp.setStartDate(pojoLpp.getLpp().getStartDate());
+			pojoLpp.setLpp(lpp);
 			addDetail(pojoLpp);
 		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void editLpp(Lpp lpp) throws Exception {
+		try {
+			if(lpp.getId() == null) {
+				throw new Exception("id cannot be null");
+			}
+			Lpp old = getById(lpp.getId());
+			old.setDesc(lpp.getDesc());
+			old.setLocation(lpp.getLocation());
+			old.setName(lpp.getName());
+			lppDao.edit(old);
+		} catch (Exception e) {
+		
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			throw e;
 		}
 	}
