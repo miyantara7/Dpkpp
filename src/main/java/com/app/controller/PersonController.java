@@ -1,5 +1,7 @@
 package com.app.controller;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,7 +41,7 @@ public class PersonController {
 		}
 	}
 	
-	@PutMapping("petugas/edit")
+	@PutMapping("/petugas/edit")
 	@Transactional
 	public ResponseEntity<?> editPersonData(@RequestBody Person person) throws Exception {
 		try {
@@ -77,7 +80,7 @@ public class PersonController {
 		}
 	}
 	
-	@GetMapping("admin/get-person/{id}")
+	@GetMapping("/admin/get-person/{id}")
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<?> getPersonAdmin(@PathVariable("id") String id) throws Exception {
 		try {			
@@ -86,6 +89,17 @@ public class PersonController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+	@DeleteMapping("/admin/delete-person")
+	@Transactional
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public ResponseEntity<?> deletePerson(@RequestBody List<Person> listPerson) throws Exception {
+		try {			
+			personService.deletePerson(listPerson);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
 	
 }

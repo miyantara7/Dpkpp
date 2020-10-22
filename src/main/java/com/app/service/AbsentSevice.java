@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.persistence.RollbackException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import com.app.dao.AbsentDao;
 import com.app.helper.Constants;
 import com.app.helper.SessionHelper;
 import com.app.model.Absent;
+import com.app.model.Lpp;
+import com.app.model.Person;
 import com.app.pojo.PojoAbsentPerson;
 import com.app.pojo.PojoHistoriAbsen;
 import com.app.pojo.PojoPagination;
@@ -46,6 +50,21 @@ public class AbsentSevice extends BaseService {
 
 	@Value("${photo.not.found}")
 	private String photoNotFound;
+	
+	public Absent getById(String id) throws Exception{
+		Absent absent = absentDao.getById(id);
+		if(absent != null) {
+			return absent;
+		}else {
+			throw new Exception("Absent not exist !");
+		}
+	}
+	
+	public void valIdExist(Absent absent) throws Exception{
+		if(absentDao.getById(absent.getId()) == null){
+			throw new Exception("Absent not exist !");
+		}
+	}
 	
 	public PojoPagination getAbsentByPaging(int page,int limit) throws Exception{
 		PojoPagination pojo = new PojoPagination();
@@ -267,6 +286,16 @@ public class AbsentSevice extends BaseService {
 	
 	}
 	
+	public void delete(Absent absent) throws Exception,RollbackException	 {	
+		try {
+			valIdExist(absent);
+
+			absentDao.delete(absent);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
 	public void adminAbsentIn(Absent absents) throws Exception{
 		try {
 			Absent absent = absentDao.getAbsentByPersonId(absents.getPerson().getId());
@@ -292,5 +321,9 @@ public class AbsentSevice extends BaseService {
 		for(Absent absent : listAbsent) {
 			adminAbsentIn(absent);
 		}
+	}
+	
+	public List<Absent> getByPersonId(String id) throws Exception{
+		return absentDao.getByPersonId(id);
 	}
 }

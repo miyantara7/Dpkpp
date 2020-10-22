@@ -16,21 +16,18 @@ public class NotificationDao extends BaseDao implements BaseMasterDao {
 
 	@Override
 	public <T> void save(T entity) throws Exception {
-		// TODO Auto-generated method stub
 		em.persist(entity);
 		
 	}
 
 	@Override
 	public <T> void edit(T entity) throws Exception {
-		// TODO Auto-generated method stub
 		em.merge(entity);
 		
 	}
 
 	@Override
 	public <T> void delete(T entity) throws Exception {
-		// TODO Auto-generated method stub
 		em.remove(entity);
 		
 	}
@@ -99,4 +96,14 @@ public class NotificationDao extends BaseDao implements BaseMasterDao {
 							
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Notification> getByPersonId(String id) {
+		
+		List<Notification> list = em.createQuery("From Notification where person.id=:id")
+								.setParameter("id", id)
+								.getResultList();
+		
+		return list;
+							
+	}
 }

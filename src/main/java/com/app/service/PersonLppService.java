@@ -97,4 +97,9 @@ public class PersonLppService {
 			throw e;
 		}
 	}
+	
+	
+	public List<PersonLpp> getByPersonId(String id) throws Exception{
+		return personLppDao.getByPersonId(id);
+	}
 }

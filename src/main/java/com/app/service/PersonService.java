@@ -21,9 +21,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.app.dao.PersonDao;
 import com.app.helper.SessionHelper;
+import com.app.model.Absent;
 import com.app.model.Laporan;
 import com.app.model.Lpp;
+import com.app.model.Notification;
 import com.app.model.Person;
+import com.app.model.PersonLpp;
+import com.app.model.User;
+import com.app.model.UserActivity;
 import com.app.pojo.PojoPagination;
 
 @Service
@@ -47,6 +52,21 @@ public class PersonService extends BaseService {
 	
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private NotificationService notService;
+	
+	@Autowired
+	private PersonLppService personLppService;
+	
+	@Autowired
+	private LppService lppService;
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private UserActivityService userActivityService;
 	
 	public Person getById(String id) throws Exception{
 		Person person = personDao.getById(id);
@@ -115,6 +135,14 @@ public class PersonService extends BaseService {
 			throw e;
 		}
 	}
+	public void delete(Person person) throws Exception {
+		try {
+			valIdExist(person);
+			personDao.delete(person);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
 	
 	public void editPerson(Person person) throws Exception {
 		try {
@@ -163,5 +191,61 @@ public class PersonService extends BaseService {
 
 	public List<Object> getPetugas() throws Exception {
 		return personDao.getPetugas();
+	}
+	@Transactional
+	public void deletePersonDetail(Person person) throws Exception{
+		try {
+			String id = person.getId();
+			List<Notification> listnotification = notService.getByPersonId(id);
+			if (!listnotification.isEmpty()) {
+				for (Notification not : listnotification) {
+					notService.delete(not);
+				}
+			}
+			
+			List<PersonLpp> listPersonLpp = personLppService.getByPersonId(id);
+			if (!listPersonLpp.isEmpty()) {
+				for (PersonLpp personLpp : listPersonLpp) {
+					lppService.deleteLaporan(personLpp.getId());
+					personLppService.delete(personLpp);
+				}
+			}
+			
+			List<Lpp> listLpp = lppService.getByPersonId(id);
+			if (!listLpp.isEmpty()) {
+				for (Lpp lpp : listLpp) {
+					lppService.delete(lpp);
+				}
+			}
+			
+			List<Absent> listAbsent = absentService.getByPersonId(id);
+			if (!listAbsent.isEmpty()) {
+				for (Absent absent : listAbsent) {
+					absentService.delete(absent);
+				}
+			}
+			
+			List<User> listUser = userService.getByPersonId(id);
+			if (!listUser.isEmpty()) {
+				for (User user : listUser) {
+					List<UserActivity> listActivity = userActivityService.getActivitiesByUserId(user.getId());
+					if (!listActivity.isEmpty()) {
+						for (UserActivity activityUser : listActivity) {
+							userActivityService.delete(activityUser);
+						}
+					}
+					userService.delete(user);
+				}
+			}
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	@Transactional
+	public void deletePerson(List<Person> listPerson) throws Exception{
+		for(Person person : listPerson) {
+			deletePersonDetail(person);
+			delete(getById(person.getId()));
+		}
 	}
 }
