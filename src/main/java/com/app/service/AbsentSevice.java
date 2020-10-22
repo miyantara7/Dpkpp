@@ -156,8 +156,8 @@ public class AbsentSevice extends BaseService {
 		for(Object[] dat:dataList) {
 			PojoHistoriAbsen abs = new PojoHistoriAbsen();
 			abs.setId((String)dat[0]);
-			abs.setDateIn((Date)dat[1]);
-			abs.setDateOut((Date)dat[2]);
+			abs.setDateIn((String)dat[1]);
+			abs.setDateOut((String)dat[2]);
 			abs.setLocationIn((String)dat[3]);
 			abs.setLocationOut((String)dat[4]);
 			abs.setStatus((String)dat[5]);
@@ -187,8 +187,8 @@ public class AbsentSevice extends BaseService {
 		for(Object[] dat:dataList) {
 			PojoHistoriAbsen abs = new PojoHistoriAbsen();
 			abs.setId((String)dat[0]);
-			abs.setDateIn((Date)dat[1]);
-			abs.setDateOut((Date)dat[2]);
+			abs.setDateIn((String)dat[1]);
+			abs.setDateOut((String)dat[2]);
 			abs.setLocationIn((String)dat[3]);
 			abs.setLocationOut((String)dat[4]);
 			abs.setStatus((String)dat[5]);
