@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.persistence.Query;
+
 import org.springframework.stereotype.Repository;
 
+import com.app.helper.SessionHelper;
 import com.app.model.Notification;
 
 @Repository
@@ -55,10 +58,18 @@ public class NotificationDao extends BaseDao implements BaseMasterDao {
 				"left join tb_users us1 on us1.person_id = p3.id\r\n" + 
 				"left join tb_role_user ru1 on ru1.id = us1.role_user_id)\r\n" + 
 				"select * from g\r\n" + 
-				"where g.roles = :roles and g.is_read is not true");
+				"where g.roles = :roles and g.is_read is not true\r\n");
+		String role = SessionHelper.getUser().getRoleUser().getName();
+		if(role.equals("ROLE_PETUGAS")) {
+			sb.append(" and g.p_id =:id");
+		}
+		
+		Query que =em.createNativeQuery(sb.toString()).setParameter("roles", id); 
+		if(role.equals("ROLE_PETUGAS")) {
+			que.setParameter("id", SessionHelper.getPerson().getId());
+		}
 		System.out.println("ini role"+id);
-		List<Object[]> data = em.createNativeQuery(sb.toString()).setParameter("roles", id)
-				.getResultList();
+		List<Object[]> data = que.getResultList();
 		List<Object> dta = new ArrayList<Object>();
 		
 		for(Object[] o:data) {
