@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.app.dao.LppDao;
+import com.app.helper.Constants;
 import com.app.helper.SessionHelper;
 import com.app.model.Laporan;
 import com.app.model.Lpp;
+import com.app.model.Notification;
 import com.app.model.Person;
 import com.app.model.PersonLpp;
 import com.app.model.Progressing;
@@ -40,6 +42,9 @@ public class LppService extends BaseService {
 
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private NotificationService notService;
 
 	@Value("${path.report.file}")
 	private String path_file;
@@ -111,6 +116,10 @@ public class LppService extends BaseService {
 				personLpp.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 				personLpp.setStartDate(lpp.getStartDate());
 				personLppService.add(personLpp);
+				Notification not = new Notification();
+				not.setPerson(personLpp.getPerson());
+				not.setTitle(Constants.NEW_LPP_TITLE+pojoLpp.getLpp().getName());
+				notService.save(not);
 
 				List<Progressing> listProgress = progressingService.getAll();
 				if (!listProgress.isEmpty()) {
@@ -289,7 +298,10 @@ public class LppService extends BaseService {
 			laporan.setDesc(desc);
 			laporan.setUploadDate(new Timestamp(System.currentTimeMillis()));
 			laporanService.update(laporan);
-
+			Notification not = new Notification();
+			not.setTitle(laporan.getPersonLpp().getPerson().getName()+Constants.LPP_UPLOAD);
+			not.setLaporan(laporan);
+			notService.save(not);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -303,6 +315,10 @@ public class LppService extends BaseService {
 		PersonLpp personLpp = personLppService.getById(id);
 		personLpp.setEndDate(new Timestamp(System.currentTimeMillis()));
 		personLppService.updatePersonLpp(personLpp);
+		Notification not = new Notification();
+		not.setTitle(personLpp.getPerson().getName()+Constants.LPP_DONE);
+		not.setPersonLpp(personLpp);
+		notService.save(not);
 	}
 	
 	
