@@ -42,7 +42,7 @@ public class NotificationDao extends BaseDao implements BaseMasterDao {
 				"select tn.title,pro.description ,tl.id as pro_id,\r\n" + 
 				"case when tpl.id is null then lpp2.id else tpl.id end pt_id,\r\n" + 
 				"case when lpp.id is null then tpp.id else lpp.id end lpp,\r\n" + 
-				"case when tl.id is not null then 'Proggress' else 'Done' end not_type,\r\n" + 
+				"case when tl.id is not null then 'Proggress' else case when p3.id is not null then 'Petugas' else 'Done' end end not_type,\r\n" + 
 				"case when p.id is null then case when p2.id is null then p3.id else p2.id end else p.id end p_id,\r\n" + 
 				"case when ru1.\"name\" is not null then 'ROLE_PETUGAS' else 'ROLE_VERIFICATOR' end roles,tn.id,tn.is_read\r\n" + 
 				"from tb_notification tn \r\n" + 
