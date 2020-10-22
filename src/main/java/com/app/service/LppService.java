@@ -140,18 +140,18 @@ public class LppService extends BaseService {
 
 	}
 
-	public PojoPagination getLppByPersonId() throws Exception {
+	public PojoPagination getLppByPersonId(java.sql.Date start,java.sql.Date end) throws Exception {
 		PojoPagination pojoLkh = new PojoPagination();
-		pojoLkh.setData(lppDao.getLppByPersonId(SessionHelper.getPerson().getId(), null));
-		pojoLkh.setCount(lppDao.getCountLppByPersonId(SessionHelper.getPerson().getId(), null));
+		pojoLkh.setData(lppDao.getLppByPersonId(SessionHelper.getPerson().getId(), null,start,end));
+		pojoLkh.setCount(lppDao.getCountLppByPersonId(SessionHelper.getPerson().getId(), null,start,end));
 		return pojoLkh;
 	}
 	
 	
-	public PojoPagination getLppByPersonIdAdmin(String id) throws Exception {
+	public PojoPagination getLppByPersonIdAdmin(String id,java.sql.Date start,java.sql.Date end) throws Exception {
 		PojoPagination pojoLkh = new PojoPagination();
-		pojoLkh.setData(lppDao.getLppByPersonId(id, null));
-		pojoLkh.setCount(lppDao.getCountLppByPersonId(SessionHelper.getPerson().getId(), null));
+		pojoLkh.setData(lppDao.getLppByPersonId(id, null,start,end));
+		pojoLkh.setCount(lppDao.getCountLppByPersonId(SessionHelper.getPerson().getId(), null,start,end));
 		return pojoLkh;
 	}
 	
@@ -222,10 +222,10 @@ public class LppService extends BaseService {
 		}
 	}
 
-	public PojoPagination getLppbyAdmin(int page, int limit) throws Exception {
+	public PojoPagination getLppbyAdmin(int page, int limit,String inq) throws Exception {
 		PojoPagination pj = new PojoPagination();
-		pj.setData(lppDao.getLppAdmin(page, limit));
-		pj.setCount(lppDao.getCountLppByAdmin());
+		pj.setData(lppDao.getLppAdmin(page, limit,inq));
+		pj.setCount(lppDao.getCountLppByAdmin(inq));
 		return pj;
 	}
 

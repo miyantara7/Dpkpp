@@ -1,5 +1,7 @@
 package com.app.controller;
 
+import java.sql.Date;
+
 import javax.transaction.RollbackException;
 import javax.transaction.Transactional;
 
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -72,7 +75,17 @@ public class LppController {
 	@GetMapping(value = "/get")
 	public ResponseEntity<?> getListLppByPersonId() throws Exception {
 		try {
-			return new ResponseEntity<>(lppService.getLppByPersonId(), HttpStatus.OK);
+			return new ResponseEntity<>(lppService.getLppByPersonId(null,null), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.GET,path = "get/search",params = {"start","end"})
+	public ResponseEntity<?> getListLppByPersonIdbyFilter(Date start,Date end) throws Exception {
+		try {
+			return new ResponseEntity<>(lppService.getLppByPersonId(start,end), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -82,7 +95,7 @@ public class LppController {
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	public ResponseEntity<?> getListLppByPersonIdAdmin(@PathVariable("id") String id) throws Exception {
 		try {
-			return new ResponseEntity<>(lppService.getLppByPersonIdAdmin(id), HttpStatus.OK);
+			return new ResponseEntity<>(lppService.getLppByPersonIdAdmin(id,null,null), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -110,7 +123,16 @@ public class LppController {
 	@RequestMapping(path = "admin",params = {"page","limit"})
 	public ResponseEntity<?> getListLppAdmin(int page,int limit) throws Exception {
 		try {
-			return new ResponseEntity<>(lppService.getLppbyAdmin(page, limit), HttpStatus.OK);
+			return new ResponseEntity<>(lppService.getLppbyAdmin(page, limit,null), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@RequestMapping(path = "admin/search",params = {"page","limit","inquiry"})
+	public ResponseEntity<?> getListLppAdmin(int page,int limit,String inquiry) throws Exception {
+		try {
+			return new ResponseEntity<>(lppService.getLppbyAdmin(page, limit,inquiry), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}

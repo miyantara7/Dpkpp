@@ -1,10 +1,13 @@
 package com.app.dao;
 
 import java.math.BigInteger;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
@@ -56,10 +59,14 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 		}
 	}
 	
-	public String getQueryGetLppAdmin() {
+	public String getQueryGetLppAdmin(String inquiry) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("select tl.id,tl.code,tl.name from tb_lpp tl");
-		
+		sb.append("select tl.id,tl.code,tl.name,tl.location from tb_lpp tl"
+				+ " where 1=1 \r\n");
+		if(inquiry!= null) {
+			sb.append("and position(lower(:inquiry) in "
+					+ "lower(concat(tl.id,tl.code,tl.\"name\",tl.\"location\" ) )  ) > 0");
+		}
 		return sb.toString();
 		
 	}
@@ -76,22 +83,27 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Object> getLppAdmin(int page,int limit){
+	public List<Object> getLppAdmin(int page,int limit,String inqString){
 		List<Object> list = new ArrayList<Object>();
-		StringBuilder sb = new StringBuilder().append(getQueryGetLppAdmin());
-		List<Object[]> lt = em.createNativeQuery(sb.toString()).setFirstResult((page-1)*limit)
+		StringBuilder sb = new StringBuilder().append(getQueryGetLppAdmin(inqString));
+		Query que =em.createNativeQuery(sb.toString());
+		if(inqString != null) {
+			que.setParameter("inquiry", inqString);
+		}
+		List<Object[]> lt = que.setFirstResult((page-1)*limit)
 				.setMaxResults(limit).getResultList();
 		for(Object[] o:lt) {
 			HashMap<String, Object> data = new HashMap<String, Object>();
 			data.put("id",o[0]);
 			data.put("code",o[1]);
 			data.put("name",o[2]);
+			data.put("location", o[3]);
 			list.add(data);
 		}
 		return list;
 		
 	}
-	public String getQueryLppByPersonId(String inquiry) {
+	public String getQueryLppByPersonId(String inquiry,Date start,Date end) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tpl.id as personLppId,tl.id as laporanId,tl.\"name\",tl.description,\r\n"
 				+ "tpl.start_date\\:\\:text,tpl.end_date\\:\\:text,tpl.status \r\n"
@@ -101,36 +113,44 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 				+ "join tb_person tp on tpl.person_id = tp.id\r\n"
 				+ "where tp.id = :personId ) as lpp ");
 		sb.append("WHERE 1=1 ");
-		
-		if (inquiry != null && !inquiry.isEmpty()) {
-			sb.append(" AND POSITION(LOWER('").append(inquiry).append("') in LOWER(CONCAT(")
-					.append("lpp.personLppId,lpp.laporanId,lpp.name,lpp.description,lpp.start_date,lpp.end_date,lpp.status")
-					.append("))) > 0");
+		if(start != null && end != null) {
+			sb.append(" and to_date(lpp.start_date\\:\\:text,'yyyy-mm-dd') between :start and :end");
+			sb.append(" or to_date(lpp.end_date\\:\\:text,'yyyy-mm-dd') between :start and :end");
+
 		}
 
 		return sb.toString();
 	}
 	
-	public Integer getCountLppByAdmin() throws Exception {	
+	public Integer getCountLppByAdmin(String inq) throws Exception {	
 		StringBuilder querySb = new StringBuilder();
 		querySb.append("select count(*) from (");
-		querySb.append(getQueryGetLppAdmin());
+		querySb.append(getQueryGetLppAdmin(inq));
 		querySb.append(")");
 		querySb.append("as emp");
-		
-		BigInteger value = (BigInteger) em.createNativeQuery(querySb.toString())
+		Query que = em.createNativeQuery(querySb.toString());
+		if(inq != null) {
+			que.setParameter("inquiry", inq);
+		}
+		BigInteger value = (BigInteger) que
 				.getSingleResult();
 		
 		return value.intValue();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<PojoLppPerson> getLppByPersonId(String personId,String inquiry) throws Exception{
+	public List<PojoLppPerson> getLppByPersonId(String personId,String inquiry,Date start,Date end) throws Exception{
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT lpp.personLppId,lpp.laporanId,lpp.name,lpp.description,"
 				+"lpp.start_date,lpp.end_date,lpp.status "
 				+"From ( ");
-		List<Object[]> results = em.createNativeQuery(sb.toString() + getQueryLppByPersonId(inquiry))
+		Query que = em.createNativeQuery(sb.toString() + getQueryLppByPersonId(inquiry,start,end));
+		if(start != null && end != null) {
+			que.setParameter("start", start);
+			que.setParameter("end", end);
+		}
+		System.out.println("query "+sb.toString() + getQueryLppByPersonId(inquiry,start,end));
+		List<Object[]> results = que 
 				.setParameter("personId", personId)
 				.getResultList();
 		
@@ -138,10 +158,14 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 				"name","desc","startDate","endDate","status") : null;
 	}
 	
-	public Integer getCountLppByPersonId(String personId,String inquiry) throws Exception {	
+	public Integer getCountLppByPersonId(String personId,String inquiry,Date start,Date end) throws Exception {	
 		String sql = bBuilder("Select count(*) FROM ( ");
-		
-		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryLppByPersonId(inquiry))
+		Query que = em.createNativeQuery(sql+getQueryLppByPersonId(inquiry,start,end));
+		if(start != null && end != null) {
+			que.setParameter("start", start);
+			que.setParameter("end", end);
+		}
+		BigInteger value = (BigInteger) que
 				.setParameter("personId", personId)
 				.getSingleResult();
 		
