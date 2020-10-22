@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.app.model.Person;
 import com.app.service.PersonService;
 
 @RestController
@@ -24,11 +26,23 @@ public class PersonController {
 	@Autowired
 	private PersonService personService;
 	
-	@PutMapping("/edit")
+	@PutMapping("/ubah-foto")
 	@Transactional
-	public ResponseEntity<?> editPerson(MultipartFile file,String person) throws Exception {
+	public ResponseEntity<?> editPerson(MultipartFile file) throws Exception {
 		try {
-			personService.editPerson(file,person);
+			personService.editPerson(file);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@PutMapping("petugas/edit")
+	@Transactional
+	public ResponseEntity<?> editPersonData(@RequestBody Person person) throws Exception {
+		try {
+			personService.editPerson(person);
 			return new ResponseEntity<>("Success", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -148,7 +148,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<Object[]> getHistoriAbsentUSer(String id,int page,int limit){
-		StringBuilder sql2 = new StringBuilder("select ta.id,ta.date_in,ta.date_out,ta.location_absen_in,ta.location_absen_out,")
+		StringBuilder sql2 = new StringBuilder("select ta.id,ta.date_in\\:\\:text,ta.date_out\\:\\:text,ta.location_absen_in,ta.location_absen_out,")
 				.append("ta.status,ta.langtitude_absen_in,ta.langtitude_absen_out,ta.longtitude_absen_in,")
 				.append("ta.longtitude_absen_out,ta.file_name_absen_in ,ta.file_name_absen_out,")
 				.append("ps.name,ps.nip,lova.name as names")

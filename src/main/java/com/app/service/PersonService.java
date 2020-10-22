@@ -90,24 +90,17 @@ public class PersonService extends BaseService {
 			throw e;
 		}
 	}
-
-	public void editPerson(MultipartFile file, String persons) throws Exception {
+	public void editPerson(MultipartFile file) throws Exception {
 		try {
 			Person tempPerson = getById(SessionHelper.getPerson().getId());
 			if(tempPerson!=null) {
-				Person person = new Person();
 				if (file != null) {
 					fileService.editFotoPerson(tempPerson, file);
 					tempPerson.setTypeFile(file.getContentType());
 					tempPerson.setFileName(file.getOriginalFilename());
 				}
 
-				if (persons != null) {
-					person = super.readValue(persons, Person.class);
-					tempPerson.setName(person.getName());
-					tempPerson.setGender(person.getGender());	
-				}
-				edit(tempPerson);	
+				edit(tempPerson);
 			}
 		} catch (Exception e) {
 			throw e;
@@ -118,6 +111,18 @@ public class PersonService extends BaseService {
 		try {
 			valIdNotNull(person);
 			personDao.edit(person);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void editPerson(Person person) throws Exception {
+		try {
+			Person ps = personDao.getById(SessionHelper.getPerson().getId());
+			ps.setName(person.getName());
+			ps.setNip(person.getNip());
+			ps.setGender(person.getGender());
+			personDao.edit(ps);
 		} catch (Exception e) {
 			throw e;
 		}

@@ -96,7 +96,7 @@ public class UserService extends BaseService {
 	
 	public void updatePassword(HashMap<String, String> user) throws Exception {
 		
-		User userOld = findById();
+		User userOld = findByIdUser();
 		if(!bcryptEncoder.matches(user.get("oldPassword"), userOld.getPassword())) {
 			throw new Exception("Password did'nt Match");
 		}
@@ -161,5 +161,31 @@ public class UserService extends BaseService {
 		}		
 	}
 	
+	
+	
+	public User findByIdUser() {
+		User user =  userDao.getUserById(SessionHelper.getUserId());		
+		return user;
+		
+	}
+	
+	public User findByIdUserAdmin(String id) {
+		User user =  userDao.getUserById(id);		
+		return user;
+		
+	}
+	
+	
+public void updatePasswordAdmin(String id,HashMap<String, String> user) throws Exception {
+		
+		User userOld = userDao.getUserByIdPerson(id);
+		if(userOld != null) {
+			userOld.setPassword(bcryptEncoder.encode(user.get("newPassword")));
+			edit(userOld);
+		}
+		else {
+			throw new Exception("User Not Found");
+		}
+	}
 	
 }

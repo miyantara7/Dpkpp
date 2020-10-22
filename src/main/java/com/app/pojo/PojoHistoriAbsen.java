@@ -25,8 +25,8 @@ public class PojoHistoriAbsen {
 	public void setLongOut(String longOut) {
 		this.longOut = longOut;
 	}
-	private Date dateIn;
-	private Date dateOut;
+	private String dateIn;
+	private String dateOut;
 	private String status;
 	private String statusAbsen;
 	private String file_nameIn;
@@ -85,16 +85,17 @@ public class PojoHistoriAbsen {
 	public void setLatOut(String latOut) {
 		this.latOut = latOut;
 	}
-	public Date getDateIn() {
+
+	public String getDateIn() {
 		return dateIn;
 	}
-	public void setDateIn(Date dateIn) {
+	public void setDateIn(String dateIn) {
 		this.dateIn = dateIn;
 	}
-	public Date getDateOut() {
+	public String getDateOut() {
 		return dateOut;
 	}
-	public void setDateOut(Date dateOut) {
+	public void setDateOut(String dateOut) {
 		this.dateOut = dateOut;
 	}
 	public String getStatus() {

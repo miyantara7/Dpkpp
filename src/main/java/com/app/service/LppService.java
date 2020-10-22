@@ -17,9 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.app.dao.LppDao;
+import com.app.helper.Constants;
 import com.app.helper.SessionHelper;
 import com.app.model.Laporan;
 import com.app.model.Lpp;
+import com.app.model.Notification;
 import com.app.model.Person;
 import com.app.model.PersonLpp;
 import com.app.model.Progressing;
@@ -40,6 +42,9 @@ public class LppService extends BaseService {
 
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private NotificationService notService;
 
 	@Value("${path.report.file}")
 	private String path_file;
@@ -114,6 +119,10 @@ public class LppService extends BaseService {
 				personLpp.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 				personLpp.setStartDate(lpp.getStartDate());
 				personLppService.add(personLpp);
+				Notification not = new Notification();
+				not.setPerson(personLpp.getPerson());
+				not.setTitle(Constants.NEW_LPP_TITLE+pojoLpp.getLpp().getName());
+				notService.save(not);
 
 				List<Progressing> listProgress = progressingService.getAll();
 				if (!listProgress.isEmpty()) {
@@ -229,14 +238,15 @@ public class LppService extends BaseService {
 			pj.setName((String) o[2]);
 			pj.setDescription((String) o[3]);
 			HashMap<String, Object> data = new HashMap<String, Object>();
+		if(o[4] !=null) {
 			data.put("id", o[0]);
 			data.put("name", o[4]);
 			data.put("startDate", o[5]);
 			data.put("verikasiDate", o[6]);
 			data.put("endDate", o[7]);
 			data.put("status", o[8]);
-
 			ps.add(data);
+		}
 
 		}
 		pj.setListPerson(ps);
@@ -291,7 +301,10 @@ public class LppService extends BaseService {
 			laporan.setDesc(desc);
 			laporan.setUploadDate(new Timestamp(System.currentTimeMillis()));
 			laporanService.update(laporan);
-
+			Notification not = new Notification();
+			not.setTitle(laporan.getPersonLpp().getPerson().getName()+Constants.LPP_UPLOAD);
+			not.setLaporan(laporan);
+			notService.save(not);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -305,6 +318,10 @@ public class LppService extends BaseService {
 		PersonLpp personLpp = personLppService.getById(id);
 		personLpp.setEndDate(new Timestamp(System.currentTimeMillis()));
 		personLppService.updatePersonLpp(personLpp);
+		Notification not = new Notification();
+		not.setTitle(personLpp.getPerson().getName()+Constants.LPP_DONE);
+		not.setPersonLpp(personLpp);
+		notService.save(not);
 	}
 	
 	
@@ -413,9 +430,29 @@ public class LppService extends BaseService {
 
 	public void addPersonLpp(String id,PojoLpp pojoLpp) throws Exception{
 		try {
-			pojoLpp.setLpp(getById(id));
+			Lpp lpp = getById(id);
+			lpp.setStartDate(pojoLpp.getLpp().getStartDate());
+			pojoLpp.setLpp(lpp);
 			addDetail(pojoLpp);
 		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void editLpp(Lpp lpp) throws Exception {
+		try {
+			if(lpp.getId() == null) {
+				throw new Exception("id cannot be null");
+			}
+			Lpp old = getById(lpp.getId());
+			old.setDesc(lpp.getDesc());
+			old.setLocation(lpp.getLocation());
+			old.setName(lpp.getName());
+			lppDao.edit(old);
+		} catch (Exception e) {
+		
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			throw e;
 		}
 	}

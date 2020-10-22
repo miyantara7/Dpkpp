@@ -35,4 +35,10 @@ public class Constants {
 	
 	public static final String MOBILE = "MOBILE";
 	public static final String WEB = "WEB";
+	
+	public static final String NEW_LPP_TITLE = "Anda Menerima Lpp Baru -";
+	public static final String LPP_UPLOAD ="-Upload Photo Proggres Projek";
+	public static final String LPP_DONE ="-Sudah Menyelesaikan LPP";
+
+
 }

@@ -110,15 +110,12 @@ public class LoginService extends BaseService implements UserDetailsService {
 	public void checkUserLogin(Login login) throws Exception{
 		String username = login.getUsername();
 		User user = userDaoHibernate.getUserByUsername(username);
-		try {
 			if (user.isActiveMobile() == true) {
 				throw new Exception("User has been login !");
 			} 
 			user.setActiveMobile(true);
 			userDaoHibernate.edit(user);
-		} catch (Exception e) {
-			throw e;
-		}
+		
 	}
 	
 	public void insertUserActivityMobile(User user,String type,boolean is_active) throws Exception{
@@ -172,10 +169,9 @@ public class LoginService extends BaseService implements UserDetailsService {
 		
 		final Users userDetails = (Users) loadUserByUsername(authenticationRequest.getUsername());
 		
-		checkUserLogin(authenticationRequest);
 		
 		authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-
+		checkUserLogin(authenticationRequest);
 		final String token = jwtTokenUtil.generateToken(userDetails);
 		
 		insertUserActivityMobile(userDetails.getUser(),Constants.LOGIN,true);

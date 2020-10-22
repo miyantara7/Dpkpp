@@ -25,6 +25,7 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 	@Override
 	public <T> void edit(T entity) throws Exception {
 		// TODO Auto-generated method stub
+		em.merge(entity);
 		
 	}
 

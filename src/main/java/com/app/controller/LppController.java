@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.app.model.Lpp;
 import com.app.model.Person;
 import com.app.pojo.PojoLpp;
 import com.app.service.LppService;
@@ -231,4 +232,25 @@ public class LppController {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
+	@PutMapping(value = "/update")
+	@Transactional
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	public ResponseEntity<?> updateLpp(@RequestBody Lpp lpp) throws Exception {
+		try {
+			lppService.editLpp(lpp);
+			return new ResponseEntity<>("Success", HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping(value = "get-admin-detail/{id}")
+	public ResponseEntity<?> getLppbyId(@PathVariable("id") String id) throws Exception {
+		try {
+			return new ResponseEntity<>(lppService.getById(id), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
 }

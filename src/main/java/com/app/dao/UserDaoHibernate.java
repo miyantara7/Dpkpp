@@ -28,6 +28,15 @@ public class UserDaoHibernate extends BaseDao implements BaseMasterDao {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public User getUserByIdPerson(String id){
+		List<User> listUser = em.createQuery("FROM User where person.id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return !listUser.isEmpty() ? listUser.get(0) : null;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public boolean valUsernameAndPassword(String username,String password){
 		List<User> listUser = em.createQuery("FROM User where username = :username and password = :password")
 				.setParameter("username", username)
