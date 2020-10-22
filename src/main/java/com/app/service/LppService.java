@@ -84,7 +84,7 @@ public class LppService extends BaseService {
 	}
 
 	@Transactional
-	public void add(String pojoLpps) throws Exception {
+	public void add(MultipartFile file,String pojoLpps) throws Exception {
 		try {
 			PojoLpp pojoLpp = new PojoLpp();
 			pojoLpp = super.readValue(pojoLpps, PojoLpp.class);
@@ -93,6 +93,9 @@ public class LppService extends BaseService {
 			lpp.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 			lpp.setPerson(SessionHelper.getPerson());
 			lppDao.save(lpp);
+			if(file != null) {
+				fileService.addFileReport(file, lpp);
+			}
 			addDetail(pojoLpp);
 		} catch (IOException e) {
 			throw e;

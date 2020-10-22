@@ -25,15 +25,7 @@ public class Person extends BaseModel{
 	private String typeFile;
 	@Column(columnDefinition="TEXT")
 	private String fileName;
-	@OneToOne
-	@JoinColumn(name = "unit_position_id")
-	private UnitPosition unit;
-	public UnitPosition getUnit() {
-		return unit;
-	}
-	public void setUnit(UnitPosition unit) {
-		this.unit = unit;
-	}
+
 	public String getFileName() {
 		return fileName;
 	}

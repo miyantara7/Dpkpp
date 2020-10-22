@@ -31,11 +31,49 @@ public class FileService {
 	@Value("${photo.not.found}")
     private String photoNotFound;
 	
-	public void addFileReport(MultipartFile file,Lpp lpp) throws Exception{
+	@Value("${path.photo}")
+    private String path_foto;
+	
+	@Value("${upload.path}")
+    private String path_default;
+		
+	public void editFotoPerson(Person person,MultipartFile file) throws Exception{
+		try {
+			deleteFotoPerson(person,file);
+			addFotoPerson(file,person);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+	
+	public void deleteFotoPerson(Person person,MultipartFile file) throws Exception{
+		try {
+			if (file != null) {
+				File fileDel = new File(path_foto + "/" + person.getId() + "_" + person.getFileName());
+				if (fileDel.delete()) {
+					System.out.println(person.getId() + "_" + person.getFileName() + " has deleted !");
+				}
+			}
+		} catch (Exception e) {
+			throw new Exception("Cannot delete file !");
+		}
+	}
+	
+	public void addFotoPerson(MultipartFile file,Person person) throws Exception{
 		try {
 			String fileName = file.getOriginalFilename();
 			InputStream is = file.getInputStream();
-			Files.copy(is, Paths.get(path_file + lpp.getId() + "_" + fileName), StandardCopyOption.REPLACE_EXISTING);
+			Files.copy(is, Paths.get(path_foto + person.getId() + "_" + fileName), StandardCopyOption.REPLACE_EXISTING);
+		}catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed to store file %f "+file.getName(), e);
+		}
+	}
+	
+	public void addFileReport(MultipartFile file,Lpp lpp) throws Exception{
+		try {
+			Files.copy(file.getInputStream(), Paths.get(path_file + lpp.getId() + "_" + file.getOriginalFilename())
+					, StandardCopyOption.REPLACE_EXISTING);
 		}catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception("Failed to store file %f "+file.getName(), e);
@@ -70,6 +108,37 @@ public class FileService {
 			e.printStackTrace();
 		}	
 		return foto;
+	}
+	
+	public Person getFotoPerson(Person person) throws Exception{
+		try {			
+			String photo;
+			File file;
+			file = new File(path_foto + person.getId() + "_" + person.getFileName());
+			if (file.exists()) {
+				try {
+					photo = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
+					person.setPhoto(photo);
+					person.setFileName(person.getFileName());
+					person.setTypeFile(person.getTypeFile());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					file = new File(path_default + photoNotFound);
+					photo = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
+					person.setPhoto(photo);
+					person.setFileName(file.getName());
+					person.setTypeFile("image/"+FilenameUtils.getExtension(file.toString()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+		return person;
 	}
 	
 	public void editDepan(String path,Laporan laporan,MultipartFile file) throws Exception{

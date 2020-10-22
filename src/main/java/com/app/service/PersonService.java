@@ -42,6 +42,12 @@ public class PersonService extends BaseService {
 	@Value("${photo.not.found}")
 	private String photoNotFound;
 	
+	@Value("${upload.path}")
+    private String path_default;
+	
+	@Autowired
+	private FileService fileService;
+	
 	public Person getById(String id) throws Exception{
 		Person person = personDao.getById(id);
 		if(person != null) {
@@ -56,48 +62,52 @@ public class PersonService extends BaseService {
 			throw new Exception("Person not exist !");
 		}
 	}
+	
+	public void valIdNotNull(Person person) throws Exception{
+		if(person.getId().equals("") || person.getId() == null){
+			throw new Exception("Person id cannot be null !");
+		}
+	}
+	
+	public void valIdNull(Person person) throws Exception{
+		if(!person.getId().equals("") || person.getId() != null){
+			throw new Exception("Person id must be null !");
+		}
+	}
+	
+	public void valIdBkExist(Person person) throws Exception{
+		if (personDao.getPersonByNip(person.getNip()) != null) {
+			throw new Exception("Person is exist !");
+		}
+	}
 
 	public void save(Person person) throws Exception {
 		try {
-			if (personDao.getPersonByNip(person.getNip()) != null) {
-				throw new Exception("Person is exist !");
-			} else {
-				personDao.save(person);
-			}
+			valIdBkExist(person);
+			valIdNull(person);
+			personDao.save(person);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
 	public void editPerson(MultipartFile file, String persons) throws Exception {
-		Person person = new Person();
-		File fileDel = null;
-		if (persons != null) {
-			person = super.readValue(persons, Person.class);
-		}
 		try {
-			Person tempPerson = personDao.getPersonById(SessionHelper.getPerson().getId());
+			Person tempPerson = getById(SessionHelper.getPerson().getId());
 			if(tempPerson!=null) {
+				Person person = new Person();
 				if (file != null) {
-					fileDel = new File(path + "/" + tempPerson.getId() + "_" + tempPerson.getFileName());
-					fileDel.delete();
+					fileService.editFotoPerson(tempPerson, file);
 					tempPerson.setTypeFile(file.getContentType());
 					tempPerson.setFileName(file.getOriginalFilename());
 				}
-				System.out.println(tempPerson.getName());
-				if (person != null) {
+
+				if (persons != null) {
+					person = super.readValue(persons, Person.class);
 					tempPerson.setName(person.getName());
 					tempPerson.setGender(person.getGender());	
-					System.out.println("N nUll"+tempPerson.getName());
 				}
-				
-				if (file != null) {
-					InputStream is = file.getInputStream();
-					Files.copy(is, Paths.get(path + tempPerson.getId() + "_" + tempPerson.getFileName()),
-							StandardCopyOption.REPLACE_EXISTING);
-				} 
-				
-				edit(tempPerson);
+				edit(tempPerson);	
 			}
 		} catch (Exception e) {
 			throw e;
@@ -106,6 +116,7 @@ public class PersonService extends BaseService {
 
 	public void edit(Person person) throws Exception {
 		try {
+			valIdNotNull(person);
 			personDao.edit(person);
 		} catch (Exception e) {
 			throw e;
@@ -113,63 +124,20 @@ public class PersonService extends BaseService {
 	}
 
 	public Person findbyId() throws Exception {
-		Person person = personDao.getPersonById(SessionHelper.getPerson().getId());
-		String filePath = person.getId() + "_" + person.getFileName();
-		String photo;
-		File file;
-		file = new File(path + filePath);
-		if (file.exists()) {
-			try {
-				photo = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
-				person.setPhoto(photo);
-				person.setFileName(person.getFileName());
-				person.setTypeFile(person.getTypeFile());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				file = new File(path + photoNotFound);
-				photo = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
-				person.setPhoto(photo);
-				person.setFileName(file.getName());
-				person.setTypeFile("image/"+FilenameUtils.getExtension(file.toString()));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		try {
+			Person person = personDao.getById(SessionHelper.getPerson().getId());
+			fileService.getFotoPerson(person);
+			return person;
+		} catch (Exception e) {
+			throw e;
 		}
-		return person;
 	}
 
 	public HashMap<String, Object> findbyIdAdmin(String id) throws Exception {
 
 		HashMap<String, Object> rtData = new HashMap<String, Object>();
-		Person person = personDao.getPersonById(id);
-		String filePath = person.getId() + "_" + person.getFileName();
-		String photo;
-		File file;
-		file = new File(path + filePath);
-		if (file.exists()) {
-			try {
-				photo = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
-				person.setPhoto(photo);
-				person.setFileName(person.getFileName());
-				person.setTypeFile(person.getTypeFile());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				file = new File(path + photoNotFound);
-				photo = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(file));
-				person.setPhoto(photo);
-				person.setFileName(file.getName());
-				person.setTypeFile("image/"+FilenameUtils.getExtension(file.toString()));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		rtData.put("person", person);
+		Person person = personDao.getById(id);
+		rtData.put("person", fileService.getFotoPerson(person));
 		rtData.put("absen", absentService.getUserAbsentByIdAdmin(id));
 		return rtData;
 	}
@@ -188,10 +156,6 @@ public class PersonService extends BaseService {
 		return pojo;
 	}
 
-	public List<Object[]> getPojoPersonById(String id) throws Exception {
-		return personDao.getPojoPersonById(id);
-	}
-	
 	public List<Object> getPetugas() throws Exception {
 		return personDao.getPetugas();
 	}

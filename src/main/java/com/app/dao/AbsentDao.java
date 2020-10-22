@@ -30,20 +30,15 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 	
 	public String getQueryForAbsent(String inquiry) throws Exception{
 		StringBuilder sb = new StringBuilder();
-		sb.append("select person.id,person.nip,person.name, " ) 
-		.append("(case when person.unit is null then '-' else person.unit end) as unit, ") 
-		.append("(case when person.positions is null then '-' else person.positions end) as positions,")
+		sb.append("select person.id,person.nip,person.name, " )
 		.append("(case when absents.date_in\\:\\:text is null then '-' else absents.date_in\\:\\:text end) as date_in," ) 
 		.append("(case when absents.date_out\\:\\:text is null then '-' else absents.date_out\\:\\:text end) as date_out," ) 
 		.append("(case when absents.location_absen_in is null then '-' else absents.location_absen_in end) as location_in," ) 
 		.append("(case when absents.location_absen_out is null then '-' else absents.location_absen_out end) as location_out," ) 
 		.append("(case when absents.status is null then '-' else absents.status end) as status " ) 
 		.append("from "  )
-		.append("	(select tp.id , tp.nip , tp.name, tu.\"name\" unit,tp2.\"name\" positions ") 
-		.append("	from tb_person tp ")
-		.append("	left join tb_unit_position tup on tp.unit_position_id  = tup.id " )
-		.append("	left join tb_unit tu on tu.id = tup.unit_id " )
-		.append("	left join tb_position tp2 on tup.position_id = tp2.id) as person "  )
+		.append("	(select tp.id , tp.nip , tp.name ") 
+		.append("	from tb_person tp ) as person ")
 		.append("left join "  )
 		.append("	(select tp.id , tp.nip , tp.\"name\",ta.date_in,ta.date_out,ta.status, "  )
 		.append("	ta.location_absen_in ,ta.location_absen_out " )
@@ -56,9 +51,8 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		
 		  if (inquiry != null && !inquiry.isEmpty()) {
 			   sb.append(" AND POSITION(LOWER('").append(inquiry)
-			   .append("') in LOWER(CONCAT(").append("absen.id,absen.nip,absen.name,absen.unit,absen.positions,"
-			   		+ "absen.date_in,absen.date_out,absen.location_in,"
-			   		+ "absen.location_out,absen.status ")
+			   .append("') in LOWER(CONCAT(").append("absen.id,absen.nip,absen.name,absen.date_in,absen.date_out,"
+			   		+ "absen.location_in,absen.location_out,absen.status ")
 			     .append("))) > 0");
 			  }
 		
@@ -68,9 +62,8 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<?> getAbsentByPaging(int page, int limit,String inquiry) throws Exception {	
-		String sql = bBuilder("Select absen.id,absen.nip,absen.name,absen.unit,absen.positions,"
-				+ "absen.date_in,absen.date_out,absen.location_in,"
-				+ "absen.location_out,absen.status "
+		String sql = bBuilder("Select absen.id,absen.nip,absen.name,absen.date_in,absen.date_out,"
+				+ "absen.location_in,absen.location_out,absen.status "
 				+ "FROM ( ");
 		
 		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsent(inquiry))
@@ -78,7 +71,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 				.setMaxResults(limit)
 				.getResultList();
 		
-		return !list.isEmpty() ? bMapperList(list, PojoAbsent.class, "id","nip","nama","unit","position","dateIn","dateOut","locationIn","locationOut","status") : list;
+		return !list.isEmpty() ? bMapperList(list, PojoAbsent.class, "id","nip","nama","dateIn","dateOut","locationIn","locationOut","status") : list;
 	}
 	
 	public Integer getCountAbsentByPaging(String inquiry) throws Exception {	
