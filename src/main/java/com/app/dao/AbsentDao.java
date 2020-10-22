@@ -7,6 +7,8 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.app.model.Absent;
+import com.app.model.Notification;
+import com.app.model.Person;
 import com.app.pojo.PojoAbsent;
 import com.app.pojo.PojoAbsentPerson;
 
@@ -26,6 +28,15 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 	@Override
 	public <T> void delete(T entity) {
 		em.remove(entity);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Absent getById(String id) throws Exception{
+		List<Absent> results = em.createQuery("FROM Absent where id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return !results.isEmpty() ? results.get(0) : null;
 	}
 	
 	public String getQueryForAbsent(String inquiry) throws Exception{
@@ -169,5 +180,16 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		return data;
 		
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Absent> getByPersonId(String id) {
+		
+		List<Absent> list = em.createQuery("From Absent where person.id=:id")
+								.setParameter("id", id)
+								.getResultList();
+		
+		return list;
+							
 	}
 }

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.app.model.Absent;
+import com.app.model.UserActivity;
 import com.app.pojo.PojoUserActivity;
 
 @Repository
@@ -23,6 +25,23 @@ public class UserActivityDao extends BaseDao implements BaseMasterDao {
 		return !list.isEmpty() ? bMapperList(list, PojoUserActivity.class, "id","name","date","type") : null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public UserActivity getById(String id) throws Exception{
+		List<UserActivity> results = em.createQuery("FROM UserActivity where id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return !results.isEmpty() ? results.get(0) : null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<UserActivity> getActivitiesByUserId(String id) throws Exception{
+		List<UserActivity> results = em.createQuery("FROM UserActivity where user.id = :id")
+				.setParameter("id", id)
+				.getResultList();
+		
+		return results;
+	}
 	@Override
 	public <T> void save(T entity) throws Exception{
 		em.persist(entity);	
@@ -30,12 +49,12 @@ public class UserActivityDao extends BaseDao implements BaseMasterDao {
 
 	@Override
 	public <T> void edit(T entity) throws Exception{
-		
+		em.merge(entity);
 	}
 
 	@Override
 	public <T> void delete(T entity) throws Exception{
-
+		em.remove(entity);
 	}
 
 

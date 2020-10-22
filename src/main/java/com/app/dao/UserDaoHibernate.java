@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.app.model.Absent;
+import com.app.model.Notification;
 import com.app.model.User;
 
 @Repository
@@ -19,13 +21,14 @@ public class UserDaoHibernate extends BaseDao implements BaseMasterDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public User getUserById(String id){
+	public User getById(String id){
 		List<User> listUser = em.createQuery("FROM User where id = :id")
 				.setParameter("id", id)
 				.getResultList();
 		
 		return !listUser.isEmpty() ? listUser.get(0) : null;
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	public User getUserByIdPerson(String id){
@@ -44,6 +47,17 @@ public class UserDaoHibernate extends BaseDao implements BaseMasterDao {
 				.getResultList();
 		
 		return !listUser.isEmpty() ? true : false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<User> getByPersonId(String id) {
+		
+		List<User> list = em.createQuery("From User where person.id=:id")
+								.setParameter("id", id)
+								.getResultList();
+		
+		return list;
+							
 	}
 	
 	@Override

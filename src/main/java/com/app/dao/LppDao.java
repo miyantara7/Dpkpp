@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.app.model.Lpp;
+import com.app.model.Notification;
 import com.app.pojo.PojoLppPerson;
 import com.app.pojo.PojoLppPetugas;
 import com.app.pojo.PojoPersonLkh;
@@ -270,5 +271,16 @@ public class LppDao extends BaseDao implements BaseMasterDao{
 				.getSingleResult();
 		
 		return value.intValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Lpp> getByPersonId(String id) {
+		
+		List<Lpp> list = em.createQuery("From Lpp where person.id=:id")
+								.setParameter("id", id)
+								.getResultList();
+		
+		return list;
+							
 	}
 }

@@ -8,6 +8,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
+
+import javax.persistence.RollbackException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -20,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.app.dao.UserDaoHibernate;
 import com.app.helper.Constants;
 import com.app.helper.SessionHelper;
+import com.app.model.Absent;
 import com.app.model.Person;
 import com.app.model.RegisterUser;
 import com.app.model.User;
@@ -61,8 +65,14 @@ public class UserService extends BaseService {
 		
 	}
 	
+	public void valIdExist(User user) throws Exception{
+		if(userDao.getById(user.getId()) == null){
+			throw new Exception("User not exist !");
+		}
+	}
+	
 	public User findById() {
-		User user =  userDao.getUserById(SessionHelper.getUserId());
+		User user =  userDao.getById(SessionHelper.getUserId());
 		Person person = user.getPerson();
 		String filePath = person.getId() + "_" + person.getFileName();
 		String photo;
@@ -161,22 +171,30 @@ public class UserService extends BaseService {
 		}		
 	}
 	
-	
+	public void delete(User user) throws Exception,RollbackException	 {	
+		try {
+			valIdExist(user);
+
+			userDao.delete(user);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
 	
 	public User findByIdUser() {
-		User user =  userDao.getUserById(SessionHelper.getUserId());		
+		User user =  userDao.getById(SessionHelper.getUserId());		
 		return user;
 		
 	}
 	
 	public User findByIdUserAdmin(String id) {
-		User user =  userDao.getUserById(id);		
+		User user =  userDao.getById(id);		
 		return user;
 		
 	}
 	
 	
-public void updatePasswordAdmin(String id,HashMap<String, String> user) throws Exception {
+	public void updatePasswordAdmin(String id,HashMap<String, String> user) throws Exception {
 		
 		User userOld = userDao.getUserByIdPerson(id);
 		if(userOld != null) {
@@ -188,4 +206,7 @@ public void updatePasswordAdmin(String id,HashMap<String, String> user) throws E
 		}
 	}
 	
+	public List<User> getByPersonId(String id) throws Exception {
+		return userDao.getByPersonId(id);
+	}
 }

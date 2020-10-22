@@ -476,4 +476,9 @@ public class LppService extends BaseService {
 			throw e;
 		}
 	}
+
+	public List<Lpp> getByPersonId(String id) throws Exception{
+		return lppDao.getByPersonId(id);
+	}
+	
 }
