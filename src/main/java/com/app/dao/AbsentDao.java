@@ -45,8 +45,8 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 	public String getQueryForAbsent(String inquiry) throws Exception{
 		StringBuilder sb = new StringBuilder();
 		sb.append("select person.id,person.nip,person.name, " )
-		.append("(case when absents.date_in\\:\\:text is null then null else absents.date_in\\:\\:text end) as date_in," ) 
-		.append("(case when absents.date_out\\:\\:text is null then null else absents.date_out\\:\\:text end) as date_out," ) 
+		.append("(case when absents.date_in\\:\\:text is null then null else (absents.date_in + interval '7 hours')\\:\\:text end) as date_in," ) 
+		.append("(case when absents.date_out\\:\\:text is null then null else (absents.date_out + interval '7 hours')\\:\\:text end) as date_out," ) 
 		.append("(case when absents.location_absen_in is null then '-' else absents.location_absen_in end) as location_in," ) 
 		.append("(case when absents.location_absen_out is null then '-' else absents.location_absen_out end) as location_out," ) 
 		.append("(case when absents.status is null then '-' else absents.status end) as status " ) 
