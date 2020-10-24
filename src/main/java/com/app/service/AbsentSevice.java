@@ -68,15 +68,15 @@ public class AbsentSevice extends BaseService {
 	
 	public PojoPagination getAbsentByPaging(int page,int limit) throws Exception{
 		PojoPagination pojo = new PojoPagination();
-		pojo.setData(absentDao.getAbsentByPaging(page,limit,null,null,null));
-		pojo.setCount(absentDao.getCountAbsentByPaging(null,null,null));
+		pojo.setData(absentDao.getAbsentByPaging(page,limit,null));
+		pojo.setCount(absentDao.getCountAbsentByPaging(null));
 		return pojo;
 	}
 	
-	public PojoPagination getAbsentBySearch(int page,int limit,String inquiry,String periodBegin,String periodEnd) throws Exception{
+	public PojoPagination getAbsentBySearch(int page,int limit,String inquiry) throws Exception{
 		PojoPagination pojo = new PojoPagination();
-		pojo.setData(absentDao.getAbsentByPaging(page,limit,inquiry,periodBegin,periodEnd));
-		pojo.setCount(absentDao.getCountAbsentByPaging(inquiry,periodBegin,periodEnd));
+		pojo.setData(absentDao.getAbsentByPaging(page,limit,inquiry));
+		pojo.setCount(absentDao.getCountAbsentByPaging(inquiry));
 		return pojo;
 	}
 	

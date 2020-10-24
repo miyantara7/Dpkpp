@@ -42,7 +42,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		return !results.isEmpty() ? results.get(0) : null;
 	}
 	
-	public String getQueryForAbsent(String inquiry,String periodBegin,String periodEnd) throws Exception{
+	public String getQueryForAbsent(String inquiry) throws Exception{
 		StringBuilder sb = new StringBuilder();
 		sb.append("select person.id,person.nip,person.name, " )
 		.append("(case when absents.date_in\\:\\:text is null then '-' else absents.date_in\\:\\:text end) as date_in," ) 
@@ -76,12 +76,12 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<?> getAbsentByPaging(int page, int limit,String inquiry,String periodBegin,String periodEnd) throws Exception {	
+	public List<?> getAbsentByPaging(int page, int limit,String inquiry) throws Exception {	
 		String sql = bBuilder("Select absen.id,absen.nip,absen.name,absen.date_in,absen.date_out,"
 				+ "absen.location_in,absen.location_out,absen.status "
 				+ "FROM ( ");
 		
-		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsent(inquiry,periodBegin,periodEnd))
+		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsent(inquiry))
 				.setFirstResult((page-1)*limit)
 				.setMaxResults(limit)
 				.getResultList();
@@ -89,11 +89,11 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		return !list.isEmpty() ? bMapperList(list, PojoAbsent.class, "id","nip","nama","dateIn","dateOut","locationIn","locationOut","status") : list;
 	}
 	
-	public Integer getCountAbsentByPaging(String inquiry,String periodBegin,String periodEnd) throws Exception {	
+	public Integer getCountAbsentByPaging(String inquiry) throws Exception {	
 		String sql = bBuilder("Select count(*) "
 				+ "FROM ( ");
 		
-		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsent(inquiry,periodBegin,periodEnd))
+		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsent(inquiry))
 				.getSingleResult();
 		
 		return value.intValue();

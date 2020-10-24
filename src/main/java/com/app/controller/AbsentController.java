@@ -42,9 +42,9 @@ public class AbsentController {
 	
 	@GetMapping(value = "/admin/get-list/search", params = {"page","limit"})
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<?> getAbsentBySearch(int page,int limit,String inquiry,String periodBegin,String periodEnd) throws Exception {
+	public ResponseEntity<?> getAbsentBySearch(int page,int limit,String inquiry) throws Exception {
 		try {			
-			return new ResponseEntity<>(absentService.getAbsentBySearch(page,limit,inquiry,periodBegin,periodEnd), HttpStatus.OK);
+			return new ResponseEntity<>(absentService.getAbsentBySearch(page,limit,inquiry), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
