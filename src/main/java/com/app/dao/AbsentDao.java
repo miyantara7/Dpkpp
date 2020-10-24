@@ -1,8 +1,11 @@
 package com.app.dao;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+
+import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
 
@@ -39,7 +42,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		return !results.isEmpty() ? results.get(0) : null;
 	}
 	
-	public String getQueryForAbsent(String inquiry) throws Exception{
+	public String getQueryForAbsent(String inquiry,String periodBegin,String periodEnd) throws Exception{
 		StringBuilder sb = new StringBuilder();
 		sb.append("select person.id,person.nip,person.name, " )
 		.append("(case when absents.date_in\\:\\:text is null then '-' else absents.date_in\\:\\:text end) as date_in," ) 
@@ -60,6 +63,7 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		.append("on person.id = absents.id ) as absen ")
 		.append("WHERE 1=1 ");
 		
+		
 		  if (inquiry != null && !inquiry.isEmpty()) {
 			   sb.append(" AND POSITION(LOWER('").append(inquiry)
 			   .append("') in LOWER(CONCAT(").append("absen.id,absen.nip,absen.name,absen.date_in,absen.date_out,"
@@ -72,12 +76,12 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<?> getAbsentByPaging(int page, int limit,String inquiry) throws Exception {	
+	public List<?> getAbsentByPaging(int page, int limit,String inquiry,String periodBegin,String periodEnd) throws Exception {	
 		String sql = bBuilder("Select absen.id,absen.nip,absen.name,absen.date_in,absen.date_out,"
 				+ "absen.location_in,absen.location_out,absen.status "
 				+ "FROM ( ");
 		
-		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsent(inquiry))
+		List<Object[]> list = em.createNativeQuery(sql+getQueryForAbsent(inquiry,periodBegin,periodEnd))
 				.setFirstResult((page-1)*limit)
 				.setMaxResults(limit)
 				.getResultList();
@@ -85,11 +89,11 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		return !list.isEmpty() ? bMapperList(list, PojoAbsent.class, "id","nip","nama","dateIn","dateOut","locationIn","locationOut","status") : list;
 	}
 	
-	public Integer getCountAbsentByPaging(String inquiry) throws Exception {	
+	public Integer getCountAbsentByPaging(String inquiry,String periodBegin,String periodEnd) throws Exception {	
 		String sql = bBuilder("Select count(*) "
 				+ "FROM ( ");
 		
-		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsent(inquiry))
+		BigInteger value = (BigInteger) em.createNativeQuery(sql+getQueryForAbsent(inquiry,periodBegin,periodEnd))
 				.getSingleResult();
 		
 		return value.intValue();
@@ -146,36 +150,74 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		return !list.isEmpty() ? list.get(0) : new Absent();
 	}
 	
-	public Integer getCountAbsentPerson(String person_id) throws Exception {	
-		String sql = bBuilder("select count(*) from tb_absent ta\r\n" + 
-				"where ta.person_id =:person_id");
+	public Integer getCountAbsentPerson(String id,String inquiry,Date periodBegin,Date periodEnd) throws Exception {	
+		String sql = bBuilder("select count(*) from ( ");
 		
-		BigInteger value = (BigInteger) em.createNativeQuery(sql)
-				.setParameter("person_id",person_id)
-							.getSingleResult();
+		Query query = em.createNativeQuery(sql +getQueryHistoriAbsent(inquiry, periodBegin, periodEnd))
+				.setParameter("id",id);
+		
+		BigInteger value = (BigInteger) setParamAbsentHistory(query, periodBegin, periodEnd).getSingleResult();
 		
 		return value.intValue();
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Object[]> getHistoriAbsentUSer(String id,int page,int limit){
-		StringBuilder sql2 = new StringBuilder("select ta.id,ta.date_in\\:\\:text,ta.date_out\\:\\:text,ta.location_absen_in,ta.location_absen_out,")
+	
+	public String getQueryHistoriAbsent(String inquiry,Date periodBegin,Date periodEnd) throws Exception{
+		StringBuilder sb = new StringBuilder();
+		sb.append("select ta.id,(ta.date_in + interval '7 hours') as date_in,(ta.date_out + interval '7 hours') as date_out,ta.location_absen_in,ta.location_absen_out,")
 				.append("ta.status,ta.langtitude_absen_in,ta.langtitude_absen_out,ta.longtitude_absen_in,")
 				.append("ta.longtitude_absen_out,ta.file_name_absen_in ,ta.file_name_absen_out,")
-				.append("ps.name,ps.nip,lova.name as names")
-				.append(" from tb_absent ta join tb_person ps on ta.person_id = ps.id left join tb_lov_absent lova on ta.lov_absent_id = lova.id")
-				.append(" where ta.person_id=:id");
-		String sql = bBuilder("select ta.id,ta.date_in,ta.date_out,ta.location_absen_in,ta.location_absen_out,ta.status,ta.langtitude_absen_in ,\r\n" + 
-				"ta.langtitude_absen_out ,ta.longtitude_absen_in ,ta.longtitude_absen_out,ta.file_name_absen_in ,ta.file_name_absen_out \r\n" + 
-				"ps.name,ps.nip,lova.name \r\n" + 
-				"from tb_absent ta join tb_person ps on ta.person_id = ps.id left join tb_lov_absent \r\n" + 
-				"lova on ta.lov_absent_id = lova.id where ta.person_id=:id ");
+				.append("ps.name,ps.nip,lova.name as names ")
+				.append("from tb_absent ta join tb_person ps on ta.person_id = ps.id left join tb_lov_absent lova on ta.lov_absent_id = lova.id ")
+				.append("where ta.person_id=:id ) as a ")
+				.append("WHERE 1=1 ");
 		
-		List<Object[]> data = em.createNativeQuery(sql2.toString())
-				.setParameter("id",id)
+		
+		if(periodBegin != null && periodEnd == null) {
+			sb.append(" AND a.date_in\\:\\:date >= :periodBegin or a.date_out\\:\\:date >= :periodBegin");
+		}else if(periodEnd != null && periodBegin == null) {
+			sb.append(" AND a.date_out\\:\\:date <= :periodEnd or a.date_in\\:\\:date <= :periodEnd");
+		}else if(periodBegin != null && periodEnd != null){
+			sb.append(" AND a.date_in\\:\\:date >= :periodBegin  ");
+			sb.append(" AND a.date_out\\:\\:date <= :periodEnd ");
+		}
+		
+		
+		  if (inquiry != null && !inquiry.isEmpty()) {
+			   sb.append(" AND POSITION(LOWER('").append(inquiry)
+			   .append("') in LOWER(CONCAT(").append("a.id,a.date_in,a.date_out,a.location_absen_in,a.location_absen_out,"
+			   		+ "a.status,a.langtitude_absen_in,a.langtitude_absen_out,a.longtitude_absen_in,a.longtitude_absen_out,"
+			   		+ "a.name,a.nip,a.names")
+			     .append("))) > 0");
+			  }
+		  
+		  return sb.toString();
+	}
+	
+	public Query setParamAbsentHistory(Query query,Date periodBegin,Date periodEnd) throws Exception{
+		if(periodBegin != null && periodEnd == null) {
+			query.setParameter("periodBegin",periodBegin);
+		}else if(periodEnd != null && periodBegin == null) {
+			query.setParameter("periodEnd", periodEnd);
+		}else if(periodBegin != null && periodEnd != null ){
+			query.setParameter("periodBegin", periodBegin);
+			query.setParameter("periodEnd", periodEnd);
+		}		
+		
+		return query;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> getHistoriAbsentUSer(String id,int page,int limit,String inquiry,Date periodBegin,Date periodEnd) throws Exception{
+		String sb = bBuilder("SELECT a.id,a.date_in\\:\\:text,a.date_out\\:\\:text,a.location_absen_in,a.location_absen_out,"
+				,"a.status,a.langtitude_absen_in,a.langtitude_absen_out,a.longtitude_absen_in,a.longtitude_absen_out,"
+				,"a.file_name_absen_in ,a.file_name_absen_out,a.name,a.nip,a.names FROM ( ");
+
+		Query query = em.createNativeQuery(sb + getQueryHistoriAbsent(inquiry, periodBegin, periodEnd))
+				.setParameter("id",id);
+		List<Object[]> data = setParamAbsentHistory(query, periodBegin, periodEnd)
 				.setFirstResult((page-1)*limit)
-				.setMaxResults(limit).
-				getResultList();
+				.setMaxResults(limit).getResultList();
 		
 		return data;
 		

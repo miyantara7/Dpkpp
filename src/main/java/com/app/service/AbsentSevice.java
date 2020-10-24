@@ -68,15 +68,15 @@ public class AbsentSevice extends BaseService {
 	
 	public PojoPagination getAbsentByPaging(int page,int limit) throws Exception{
 		PojoPagination pojo = new PojoPagination();
-		pojo.setData(absentDao.getAbsentByPaging(page,limit,null));
-		pojo.setCount(absentDao.getCountAbsentByPaging(null));
+		pojo.setData(absentDao.getAbsentByPaging(page,limit,null,null,null));
+		pojo.setCount(absentDao.getCountAbsentByPaging(null,null,null));
 		return pojo;
 	}
 	
-	public PojoPagination getAbsentBySearch(int page,int limit,String inquiry) throws Exception{
+	public PojoPagination getAbsentBySearch(int page,int limit,String inquiry,String periodBegin,String periodEnd) throws Exception{
 		PojoPagination pojo = new PojoPagination();
-		pojo.setData(absentDao.getAbsentByPaging(page,limit,inquiry));
-		pojo.setCount(absentDao.getCountAbsentByPaging(inquiry));
+		pojo.setData(absentDao.getAbsentByPaging(page,limit,inquiry,periodBegin,periodEnd));
+		pojo.setCount(absentDao.getCountAbsentByPaging(inquiry,periodBegin,periodEnd));
 		return pojo;
 	}
 	
@@ -170,8 +170,8 @@ public class AbsentSevice extends BaseService {
 	public PojoPagination getAbsensiHistori(Integer page,Integer limit) throws Exception {
 		PojoPagination data = new PojoPagination();
 		List<PojoHistoriAbsen> dataHistory = new ArrayList<PojoHistoriAbsen>();
-		List<Object[]> dataList = absentDao.getHistoriAbsentUSer(SessionHelper.getPerson().getId(), page, limit);
-		data.setCount(absentDao.getCountAbsentPerson(SessionHelper.getPerson().getId()));
+		List<Object[]> dataList = absentDao.getHistoriAbsentUSer(SessionHelper.getPerson().getId(), page, limit,null,null,null);
+		data.setCount(absentDao.getCountAbsentPerson(SessionHelper.getPerson().getId(),null,null,null));
 		for(Object[] dat:dataList) {
 			PojoHistoriAbsen abs = new PojoHistoriAbsen();
 			abs.setId((String)dat[0]);
@@ -198,11 +198,73 @@ public class AbsentSevice extends BaseService {
 		return data;
 	}
 	
-	public PojoPagination getAbsensiHistoribyAdmin(String id,Integer page,Integer limit) throws Exception {
+	public PojoPagination getAbsensiHistoriBySearch(Integer page,Integer limit,String inquiry,Date periodBegin,Date periodEnd) throws Exception {
 		PojoPagination data = new PojoPagination();
 		List<PojoHistoriAbsen> dataHistory = new ArrayList<PojoHistoriAbsen>();
-		List<Object[]> dataList = absentDao.getHistoriAbsentUSer(id, page, limit);
-		data.setCount(absentDao.getCountAbsentPerson(id));
+		List<Object[]> dataList = absentDao.getHistoriAbsentUSer(SessionHelper.getPerson().getId(), page, limit,inquiry,periodBegin,periodEnd);
+		data.setCount(absentDao.getCountAbsentPerson(SessionHelper.getPerson().getId(),inquiry,periodBegin,periodEnd));
+		for(Object[] dat:dataList) {
+			PojoHistoriAbsen abs = new PojoHistoriAbsen();
+			abs.setId((String)dat[0]);
+			abs.setDateIn((String)dat[1]);
+			abs.setDateOut((String)dat[2]);
+			abs.setLocationIn((String)dat[3]);
+			abs.setLocationOut((String)dat[4]);
+			abs.setStatus((String)dat[5]);
+			abs.setLatIn((String)dat[6]);
+			abs.setLatOut((String)dat[7]);
+			abs.setLongIn((String)dat[8]);
+			abs.setLongOut((String)dat[9]);
+			abs.setFile_nameIn((String)dat[10]);
+			abs.setFile_nameOut((String)dat[11]);
+			abs.setNama((String)dat[12]);
+			abs.setNip((String)dat[13]);
+			abs.setStatusAbsen((String)dat[14]);
+			dataHistory.add(abs);
+		}
+		data.setData(dataHistory);
+		
+		
+		
+		return data;
+	}
+	
+	public PojoPagination getAdminAbsensiHistori(String id,Integer page,Integer limit) throws Exception {
+		PojoPagination data = new PojoPagination();
+		List<PojoHistoriAbsen> dataHistory = new ArrayList<PojoHistoriAbsen>();
+		List<Object[]> dataList = absentDao.getHistoriAbsentUSer(id, page, limit,null,null,null);
+		data.setCount(absentDao.getCountAbsentPerson(id,null,null,null));
+		for(Object[] dat:dataList) {
+			PojoHistoriAbsen abs = new PojoHistoriAbsen();
+			abs.setId((String)dat[0]);
+			abs.setDateIn((String)dat[1]);
+			abs.setDateOut((String)dat[2]);
+			abs.setLocationIn((String)dat[3]);
+			abs.setLocationOut((String)dat[4]);
+			abs.setStatus((String)dat[5]);
+			abs.setLatIn((String)dat[6]);
+			abs.setLatOut((String)dat[7]);
+			abs.setLongIn((String)dat[8]);
+			abs.setLongOut((String)dat[9]);
+			abs.setFile_nameIn((String)dat[10]);
+			abs.setFile_nameOut((String)dat[11]);
+			abs.setNama((String)dat[12]);
+			abs.setNip((String)dat[13]);
+			abs.setStatusAbsen((String)dat[14]);
+			dataHistory.add(abs);
+		}
+		data.setData(dataHistory);
+		
+		
+		
+		return data;
+	}
+	
+	public PojoPagination getAdminAbsensiHistoriBySearch(String id,Integer page,Integer limit,String inquiry,Date periodBegin,Date periodEnd) throws Exception {
+		PojoPagination data = new PojoPagination();
+		List<PojoHistoriAbsen> dataHistory = new ArrayList<PojoHistoriAbsen>();
+		List<Object[]> dataList = absentDao.getHistoriAbsentUSer(id, page, limit,inquiry,periodBegin,periodEnd);
+		data.setCount(absentDao.getCountAbsentPerson(id,inquiry,periodBegin,periodEnd));
 		for(Object[] dat:dataList) {
 			PojoHistoriAbsen abs = new PojoHistoriAbsen();
 			abs.setId((String)dat[0]);

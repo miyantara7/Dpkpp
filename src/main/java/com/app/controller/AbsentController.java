@@ -1,5 +1,6 @@
 package com.app.controller;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -41,9 +42,9 @@ public class AbsentController {
 	
 	@GetMapping(value = "/admin/get-list/search", params = {"page","limit"})
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-	public ResponseEntity<?> getAbsentBySearch(int page,int limit,String inquiry) throws Exception {
+	public ResponseEntity<?> getAbsentBySearch(int page,int limit,String inquiry,String periodBegin,String periodEnd) throws Exception {
 		try {			
-			return new ResponseEntity<>(absentService.getAbsentBySearch(page,limit,inquiry), HttpStatus.OK);
+			return new ResponseEntity<>(absentService.getAbsentBySearch(page,limit,inquiry,periodBegin,periodEnd), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -59,7 +60,7 @@ public class AbsentController {
 	}
 	
 	@GetMapping(value = "/user/get-absent-history", params = {"page","limit"})
-	public ResponseEntity<?> getUserAbsentByIdHistory(Integer page,Integer limit) throws Exception {
+	public ResponseEntity<?> getUserAbsentByIdHistory(int page,int limit) throws Exception {
 		try {			
 			return new ResponseEntity<>(absentService.getAbsensiHistori(page,limit), HttpStatus.OK);
 		} catch (Exception e) {
@@ -67,11 +68,30 @@ public class AbsentController {
 		}
 	}
 	
-	@GetMapping(value = "/admin/get-absent-history/{id}", params = {"page","limit"})
-	public ResponseEntity<?> getAdminAbsentByIdHistory(@PathVariable("id")String id,Integer page,Integer limit) throws Exception {
+	@GetMapping(value = "/user/get-absent-history/search", params = {"page","limit"})
+	public ResponseEntity<?> getUserAbsentByIdHistoryBySearch(String iquiry,int page,int limit,Date periodBegin,Date periodEnd) throws Exception {
 		try {			
-			return new ResponseEntity<>(absentService.getAbsensiHistoribyAdmin(id,page,limit), HttpStatus.OK);
+			return new ResponseEntity<>(absentService.getAbsensiHistoriBySearch(page,limit,iquiry,periodBegin,periodEnd), HttpStatus.OK);
 		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping(value = "/admin/get-absent-history/{id}", params = {"page","limit"})
+	public ResponseEntity<?> getAdminAbsentByIdHistory(@PathVariable("id")String id,int page,int limit) throws Exception {
+		try {			
+			return new ResponseEntity<>(absentService.getAdminAbsensiHistori(id,page,limit), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping(value = "/admin/get-absent-history/{id}/search", params = {"page","limit"})
+	public ResponseEntity<?> getAdminAbsentByIdHistoryBySearch(@PathVariable("id")String id,int page,int limit,String iquiry,Date periodBegin,Date periodEnd) throws Exception {
+		try {			
+			return new ResponseEntity<>(absentService.getAdminAbsensiHistoriBySearch(id,page,limit,iquiry,periodBegin,periodEnd), HttpStatus.OK);
+		} catch (Exception e) {	
+			e.printStackTrace();
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
