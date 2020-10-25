@@ -203,16 +203,17 @@ public class LppService extends BaseService {
 					throw new Exception(((BigDecimal) o[1]).toString() + " % Progress has not been verified !");
 				}
 
-				PersonLpp personLpp = personLppService.getById(id);
-				personLpp.setVerificationDate(new Timestamp(System.currentTimeMillis()));
-				personLpp.setStatus(true);
-				personLppService.update(personLpp);
-				UserActivity act = new UserActivity();
-				act.setUser(SessionHelper.getUser());
-				act.setType(Constants.VERIFICATION_LPP+"-"+personLpp.getLpp().getName());
-				act.setDate(new Date());
-				userActivityService.save(act);
+
 			}
+			PersonLpp personLpp = personLppService.getById(id);
+			personLpp.setVerificationDate(new Timestamp(System.currentTimeMillis()));
+			personLpp.setStatus(true);
+			personLppService.update(personLpp);
+			UserActivity act = new UserActivity();
+			act.setUser(SessionHelper.getUser());
+			act.setType(Constants.VERIFICATION_LPP+"-"+personLpp.getLpp().getName());
+			act.setDate(new Date());
+			userActivityService.save(act);
 		} catch (Exception e) {
 			throw e;
 		}
