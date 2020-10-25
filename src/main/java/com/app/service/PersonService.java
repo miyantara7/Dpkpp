@@ -90,7 +90,8 @@ public class PersonService extends BaseService {
 	}
 	
 	public void valIdNull(Person person) throws Exception{
-		if(!person.getId().equals("") || person.getId() != null){
+		System.out.println("person "+person);
+		if(person.getId() != null){
 			throw new Exception("Person id must be null !");
 		}
 	}

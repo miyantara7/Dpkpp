@@ -41,7 +41,7 @@ public class NotificationDao extends BaseDao implements BaseMasterDao {
 				"case when lpp.id is null then tpp.id else lpp.id end lpp,\r\n" + 
 				"case when tl.id is not null then 'Proggress' else case when p3.id is not null then 'Petugas' else 'Done' end end not_type,\r\n" + 
 				"case when p.id is null then case when p2.id is null then p3.id else p2.id end else p.id end p_id,\r\n" + 
-				"case when ru1.\"name\" is not null then 'ROLE_PETUGAS' else 'ROLE_VERIFICATOR' end roles,tn.id,tn.is_read\r\n" + 
+				"case when ru1.\"name\" is not null then 'ROLE_PENGAWAS' else 'ROLE_VERIFICATOR' end roles,tn.id,tn.is_read\r\n" + 
 				"from tb_notification tn \r\n" + 
 				"left join tb_laporan tl on tn.laporan_id = tl.id \r\n" + 
 				"left join tb_person_lpp tpl on tpl.id = tn.person_lpp_id\r\n" + 
@@ -57,12 +57,12 @@ public class NotificationDao extends BaseDao implements BaseMasterDao {
 				"select * from g\r\n" + 
 				"where g.roles = :roles and g.is_read is not true\r\n");
 		String role = SessionHelper.getUser().getRoleUser().getName();
-		if(role.equals("ROLE_PETUGAS")) {
+		if(role.equals("ROLE_PENGAWAS")) {
 			sb.append(" and g.p_id =:id");
 		}
 		
 		Query que =em.createNativeQuery(sb.toString()).setParameter("roles", id); 
-		if(role.equals("ROLE_PETUGAS")) {
+		if(role.equals("ROLE_PENGAWAS")) {
 			que.setParameter("id", SessionHelper.getPerson().getId());
 		}
 		System.out.println("ini role"+id);

@@ -52,7 +52,7 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 	
 	public String getQueryForSearch(String inquiry) throws Exception{
 		StringBuilder sb = new StringBuilder();
-		sb.append("select tp.id ,tp.nip , tp.name,tp.gender,ru.name as role "+
+		sb.append("select tp.id ,tp.nip , tp.name,tp.gender,ru.description as role "+
 				"from tb_person tp join tb_users us on us.person_id = tp.id"
 				+ " join tb_role_user ru on ru.id = us.role_user_id ) as p " +
 				"WHERE 1=1 ");
@@ -103,7 +103,7 @@ public class PersonDao extends BaseDao implements BaseMasterDao {
 		StringBuilder sb = new StringBuilder("select tp.id,tp.nip,tp.\"name\" from tb_person tp \r\n" + 
 				"join tb_users us on us.person_id = tp.id\r\n" + 
 				"join tb_role_user rl on rl.id = us.role_user_id \r\n" + 
-				"where rl.\"name\" = 'ROLE_PETUGAS'");
+				"where rl.\"name\" = 'ROLE_PENGAWAS'");
 		List<Object[]> ls = em.createNativeQuery(sb.toString()).getResultList();
 		
 		for(Object[] o:ls) {
