@@ -128,7 +128,7 @@ public class AbsentSevice extends BaseService {
 			}
 			UserActivity act = new UserActivity();
 			act.setUser(SessionHelper.getUser());
-			act.setType(Constants.USER_ABSENT_OUT);
+			act.setType(Constants.USER_ABSENT_IN);
 			act.setDate(new Date());
 			UserActivity.save(act);
 			return "Absent entry success !";

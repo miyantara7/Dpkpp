@@ -13,7 +13,7 @@ public class UserActivityDao extends BaseDao implements BaseMasterDao {
 
 	@SuppressWarnings("unchecked")
 	public List<?> getUserActivity(String id) throws Exception {	
-		String sql = bBuilder("select tua.id,tp.name, tua.date\\:\\:text, "+ 
+		String sql = bBuilder("select tua.id,tp.name, (tua.date + interval '7 hours')\\:\\:text as date, "+ 
 				"tua.type from tb_user_activity tua " + 
 				"join tb_users tu on tua.user_id = tu.id " + 
 				"join tb_person tp on tu.person_id = tp.id " + 
