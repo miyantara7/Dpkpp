@@ -225,13 +225,9 @@ public class LppService extends BaseService {
 				laporan.setVerificationDate(new Timestamp(System.currentTimeMillis()));
 				laporan.setStatus(true);
 				laporanService.update(laporan);
-				PersonLpp personLpp = personLppService.getById(id);
-//				personLpp.setVerificationDate(new Timestamp(System.currentTimeMillis()));
-//				personLpp.setStatus(true);
-//				personLppService.update(personLpp);
 				UserActivity act = new UserActivity();
 				act.setUser(SessionHelper.getUser());
-				act.setType(Constants.VERICATION_PROGGRESS_LPP+"-"+personLpp.getLpp().getName()+"-"+laporan.getProgressing().getDesc());
+				act.setType(Constants.VERICATION_PROGGRESS_LPP+"-"+laporan.getPersonLpp().getLpp().getName()+"-"+laporan.getProgressing().getDesc());
 				act.setDate(new Date());
 				userActivityService.save(act);
 			}
@@ -323,10 +319,9 @@ public class LppService extends BaseService {
 			not.setTitle(laporan.getPersonLpp().getPerson().getName()+Constants.LPP_UPLOAD);
 			not.setLaporan(laporan);
 			notService.save(not);
-			PersonLpp personLpp = personLppService.getById(id);
 			UserActivity act = new UserActivity();
 			act.setUser(SessionHelper.getUser());
-			act.setType(Constants.UPLOAD_PROGGRESS_LPP+personLpp.getLpp().getName()+"-"+laporan.getProgressing().getDesc());
+			act.setType(Constants.UPLOAD_PROGGRESS_LPP+laporan.getPersonLpp().getLpp().getName()+"-"+laporan.getProgressing().getDesc());
 			act.setDate(new Date());
 			userActivityService.save(act);
 		} catch (Exception e) {
