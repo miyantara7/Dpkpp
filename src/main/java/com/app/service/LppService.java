@@ -25,6 +25,7 @@ import com.app.model.Notification;
 import com.app.model.Person;
 import com.app.model.PersonLpp;
 import com.app.model.Progressing;
+import com.app.model.UserActivity;
 import com.app.pojo.PojoDetailLppAdmin;
 import com.app.pojo.PojoLaporan;
 import com.app.pojo.PojoLaporanAdmin;
@@ -72,6 +73,9 @@ public class LppService extends BaseService {
 
 	@Autowired
 	private PersonService personService;
+	
+	@Autowired
+	private UserActivityService userActivityService;
 
 	public Lpp getById(String id) throws Exception {
 		Lpp lpp = lppDao.getById(id);
@@ -203,6 +207,11 @@ public class LppService extends BaseService {
 				personLpp.setVerificationDate(new Timestamp(System.currentTimeMillis()));
 				personLpp.setStatus(true);
 				personLppService.update(personLpp);
+				UserActivity act = new UserActivity();
+				act.setUser(SessionHelper.getUser());
+				act.setType(Constants.VERIFICATION_LPP+"-"+personLpp.getLpp().getName());
+				act.setDate(new Date());
+				userActivityService.save(act);
 			}
 		} catch (Exception e) {
 			throw e;
@@ -216,6 +225,15 @@ public class LppService extends BaseService {
 				laporan.setVerificationDate(new Timestamp(System.currentTimeMillis()));
 				laporan.setStatus(true);
 				laporanService.update(laporan);
+				PersonLpp personLpp = personLppService.getById(id);
+//				personLpp.setVerificationDate(new Timestamp(System.currentTimeMillis()));
+//				personLpp.setStatus(true);
+//				personLppService.update(personLpp);
+				UserActivity act = new UserActivity();
+				act.setUser(SessionHelper.getUser());
+				act.setType(Constants.VERICATION_PROGGRESS_LPP+"-"+personLpp.getLpp().getName()+"-"+laporan.getProgressing().getDesc());
+				act.setDate(new Date());
+				userActivityService.save(act);
 			}
 		} catch (Exception e) {
 			throw e;
@@ -305,6 +323,12 @@ public class LppService extends BaseService {
 			not.setTitle(laporan.getPersonLpp().getPerson().getName()+Constants.LPP_UPLOAD);
 			not.setLaporan(laporan);
 			notService.save(not);
+			PersonLpp personLpp = personLppService.getById(id);
+			UserActivity act = new UserActivity();
+			act.setUser(SessionHelper.getUser());
+			act.setType(Constants.UPLOAD_PROGGRESS_LPP+personLpp.getLpp().getName()+"-"+laporan.getProgressing().getDesc());
+			act.setDate(new Date());
+			userActivityService.save(act);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -322,10 +346,7 @@ public class LppService extends BaseService {
 		not.setTitle(personLpp.getPerson().getName()+Constants.LPP_DONE);
 		not.setPersonLpp(personLpp);
 		notService.save(not);
-	}
-	
-	
-	
+	}	
 	public PojoLppPersonDetailAdmin getPersonLppDetailAdmin(String id) {
 		PojoLppPersonDetailAdmin pj = new PojoLppPersonDetailAdmin();
 		List<Object> ps = new ArrayList<Object>();

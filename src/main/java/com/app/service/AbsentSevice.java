@@ -28,6 +28,7 @@ import com.app.helper.SessionHelper;
 import com.app.model.Absent;
 import com.app.model.Lpp;
 import com.app.model.Person;
+import com.app.model.UserActivity;
 import com.app.pojo.PojoAbsentPerson;
 import com.app.pojo.PojoHistoriAbsen;
 import com.app.pojo.PojoPagination;
@@ -37,6 +38,10 @@ public class AbsentSevice extends BaseService {
 
 	@Autowired
 	private AbsentDao absentDao;
+	
+	
+	@Autowired
+	private UserActivityService UserActivity;
 
 	@Value("${path.absen.masuk}")
     private String pathMasuk;
@@ -121,6 +126,11 @@ public class AbsentSevice extends BaseService {
 				Files.copy(is, Paths.get(pathMasuk + absent.getId() + "_" + absent.getPerson().getName() + "_"
 						+ Constants.ABSENT_IN + "_" + fileName), StandardCopyOption.REPLACE_EXISTING);
 			}
+			UserActivity act = new UserActivity();
+			act.setUser(SessionHelper.getUser());
+			act.setType(Constants.USER_ABSENT_OUT);
+			act.setDate(new Date());
+			UserActivity.save(act);
 			return "Absent entry success !";
 		} catch (Exception e) {
 			throw e;
@@ -157,6 +167,11 @@ public class AbsentSevice extends BaseService {
 					Files.copy(is, Paths.get(pathKeluar + absent.getId() + "_" + absent.getPerson().getName() + "_"
 							+ Constants.ABSENT_OUT + "_" + fileName), StandardCopyOption.REPLACE_EXISTING);
 				}
+				UserActivity act = new UserActivity();
+				act.setUser(SessionHelper.getUser());
+				act.setType(Constants.USER_ABSENT_OUT);
+				act.setDate(new Date());
+				UserActivity.save(act);
 				return "Absent out success !";
 			}
 			

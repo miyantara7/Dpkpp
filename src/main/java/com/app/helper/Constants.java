@@ -39,6 +39,15 @@ public class Constants {
 	public static final String NEW_LPP_TITLE = "Anda Menerima Lpp Baru -";
 	public static final String LPP_UPLOAD ="-Upload Photo Proggres Projek";
 	public static final String LPP_DONE ="-Sudah Menyelesaikan LPP";
+	
+	
+	public static final String USER_ABSENT_IN = "Melakukan Absent In";
+	public static final String USER_ABSENT_OUT = "Melakukan Absent Out";
+	
+	public static final String UPLOAD_PROGGRESS_LPP = "UPLOAD PROGGREES LPP";
+	public static final String VERICATION_PROGGRESS_LPP = "VERIFIKASI PROGREESS LPP";
+	public static final String VERIFICATION_LPP ="VERIFIKASI LPP";
+
 
 
 }
