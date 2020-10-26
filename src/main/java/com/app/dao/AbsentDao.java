@@ -178,8 +178,9 @@ public class AbsentDao extends BaseDao implements BaseMasterDao {
 		}else if(periodEnd != null && periodBegin == null) {
 			sb.append(" AND a.date_out\\:\\:date <= :periodEnd or a.date_in\\:\\:date <= :periodEnd");
 		}else if(periodBegin != null && periodEnd != null){
-			sb.append(" AND a.date_in\\:\\:date >= :periodBegin  ");
-			sb.append(" AND a.date_out\\:\\:date <= :periodEnd ");
+			sb.append(" and to_date(a.date_in\\:\\:text,'yyyy-mm-dd') between to_date(:periodBegin,'yyyy-mm-dd') and to_date(:periodEnd,'yyyy-mm-dd')");
+			sb.append(" or to_date(a.date_out\\:\\:text,'yyyy-mm-dd') between to_date(:periodBegin,'yyyy-mm-dd') and to_date(:periodEnd,'yyyy-mm-dd')");
+
 		}
 		
 		
