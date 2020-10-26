@@ -493,6 +493,10 @@ public class LppService extends BaseService {
 		try {
 			PersonLpp personLpp = personLppService.getById(id);
 			deleteLaporan(personLpp.getId());
+			List<Notification> not = notService.getByPersonLpp(personLpp.getId());
+			for(Notification o:not) {
+				notService.delete(o);
+			}
 			personLppService.delete(personLpp);
 		} catch (Exception e) {
 			throw e;
