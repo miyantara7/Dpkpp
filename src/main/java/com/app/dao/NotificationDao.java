@@ -106,4 +106,27 @@ public class NotificationDao extends BaseDao implements BaseMasterDao {
 		return list;
 							
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Notification> getByLPPId(String id) {
+		
+		List<Notification> list = em.createQuery("From Notification where personLpp.id=:id")
+								.setParameter("id", id)
+								.getResultList();
+		
+		return list;
+							
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Notification> getByLaporanId(String id) {
+		
+		List<Notification> list = em.createQuery("From Notification where laporan.id=:id")
+								.setParameter("id", id)
+								.getResultList();
+		
+		return list;
+							
+	}
 }

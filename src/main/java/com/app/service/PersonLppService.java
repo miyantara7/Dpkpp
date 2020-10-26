@@ -10,6 +10,7 @@ import com.app.dao.PersonLppDao;
 import com.app.helper.SessionHelper;
 import com.app.model.Laporan;
 import com.app.model.Lpp;
+import com.app.model.Notification;
 import com.app.model.PersonLpp;
 
 @Service
@@ -23,6 +24,9 @@ public class PersonLppService {
 	
 	@Autowired
 	private PersonService personService;
+	
+	@Autowired
+	private NotificationService notService;
 	
 	public void add(PersonLpp personLpp) throws Exception{	
 		try {
@@ -91,7 +95,10 @@ public class PersonLppService {
 	public void delete(PersonLpp personLpp) throws Exception{	
 		try {
 			valIdExist(personLpp);
-			
+			List<Notification> not = notService.getByPersonLpp(personLpp.getId());
+			for(Notification o:not) {
+				notService.delete(o);
+			}
 			personLppDao.delete(personLpp);
 		} catch (IOException e) {
 			throw e;

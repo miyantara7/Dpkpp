@@ -59,4 +59,12 @@ public class NotificationService {
 	public List<Notification> getByPersonId(String id) throws Exception{
 		return notDao.getByPersonId(id);
 	}
+	
+	public List<Notification> getByPersonLpp(String id) throws Exception{
+		return notDao.getByLPPId(id);
+	}
+	
+	public List<Notification> getByLaporanId(String id) throws Exception{
+		return notDao.getByLaporanId(id);
+	}
 }

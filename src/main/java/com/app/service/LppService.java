@@ -427,7 +427,12 @@ public class LppService extends BaseService {
 					fileService.deleteSamping(path_foto_samping, laporan);
 					fileService.deleteDalam(path_foto_dalam, laporan);
 					fileService.deleteBelakang(path_foto_belakang, laporan);
+					List<Notification> not = notService.getByLaporanId(laporan.getId());
+					for(Notification o:not) {
+						notService.delete(o);
+					}
 					laporanService.delete(laporan);
+					
 				}
 			}
 		} catch (Exception e) {
