@@ -65,7 +65,6 @@ public class NotificationDao extends BaseDao implements BaseMasterDao {
 		if(role.equals("ROLE_PENGAWAS")) {
 			que.setParameter("id", SessionHelper.getPerson().getId());
 		}
-		System.out.println("ini role"+id);
 		List<Object[]> data = que.getResultList();
 		List<Object> dta = new ArrayList<Object>();
 		
